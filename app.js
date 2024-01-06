@@ -16,7 +16,7 @@ const grantAuth=require("./middleware/authmiddleware")
 // Call the connectDatabase function and pass the startServer function as a callback
 connectDatabase((err) => {
     if (err) {
-        console.error("Error connecting to the database:", err);
+        console.error("Error in connecting to the database:", err);
     } else {
         // Database connection successful, start the server
         startServer();
