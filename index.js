@@ -18,9 +18,13 @@ app.use(cors())
 const db = require("./config/db.config.js");
 db.sequelize.sync();
 
-const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");const { notFound, errorHandler } = require('./middleware/errorHandler.js');
-;
-app.use("/customerManager",customerManagerRouter)
+const customerManagerRouter = require("./router/stdioSide/customerManager/index.js");
+const { notFound, errorHandler } = require('./middleware/errorHandler.js');
+
+const stockManagerRouter = require("./router/stdioSide/StockManager/index.js")
+
+app.use("/customerManager" , customerManagerRouter)
+app.use("/stockManager" , stockManagerRouter )
 
 app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
 
