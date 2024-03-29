@@ -3,7 +3,7 @@ const app = express()
 const cors = require('cors')
 require('dotenv').config();
 const database=require("./config/mssql.js")
-
+const socketIo = require('socket.io');
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -25,8 +25,28 @@ app.use("/customerManager",customerManagerRouter)
 app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
 
 
+
+
+// app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`))
+
+const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
+
+// Set up Socket.IO
+const io = socketIo(server,{
+    pingTimeout: 60000,
+    cors: {
+     origin: ["http://localhost:3000",'http://localhost:3001']
+    }});
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('customerRequest', (req) => {
+    console.log('customer request',req);
+    io.emit("customerRequest",req)
+  });
+});
+
 //error handling middlewares
 app.use(notFound)
 app.use(errorHandler)
-
-app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`))
