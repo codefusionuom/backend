@@ -36,6 +36,14 @@ customerPayments.belongsTo(customers);
 
 db.customers=customers
 db.customerPayments=customerPayments
+
 db.customerRequests=customerRequests
 
+
+const event = require("../model/eventManager/event.model")(sequelize, Sequelize)
+const task = require("../model/eventManager/task.model")(sequelize, Sequelize)
+
+
+db.event = event
+db.task = task
 module.exports = db;
