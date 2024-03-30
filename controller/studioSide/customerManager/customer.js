@@ -100,7 +100,7 @@ exports.getCustomers = asyncHandler(async (req, res) => {
 })
 
 
-exports.getSearchCustomer=async(req,res)=>{
+exports.getSearchCustomer=asyncHandler(async(req,res)=>{
     console.log("serch customer")
     const query=req.query.search;
     try {
@@ -120,3 +120,4 @@ exports.getSearchCustomer=async(req,res)=>{
 
 }
 
+)

@@ -19,6 +19,7 @@ const db = require("./config/db.config.js");
 db.sequelize.sync();
 
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");const { notFound, errorHandler } = require('./middleware/errorHandler.js');
+const { createCustomerRequest } = require('./controller/studioSide/customerManager/customerRequest.js');
 ;
 app.use("/customerManager",customerManagerRouter)
 
@@ -43,6 +44,7 @@ io.on('connection', (socket) => {
 
   socket.on('customerRequest', (req) => {
     console.log('customer request',req);
+    createCustomerRequest(req)
     io.emit("customerRequest",req)
   });
 });
