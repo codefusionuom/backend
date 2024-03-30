@@ -31,19 +31,21 @@ const customers=require("../model/customer/customer.model")(sequelize, Sequelize
 const customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
 const customerRequests=require("../model/customer/customerRequest.model")(sequelize, Sequelize)
 
+const event = require("../model/eventManager/event.model")(sequelize, Sequelize)
+const task = require("../model/eventManager/task.model")(sequelize, Sequelize)
+
 customers.hasMany(customerPayments);
 customerPayments.belongsTo(customers);
+customers.hasMany(event);
+event.belongsTo(customers);
 
 db.customers=customers
 db.customerPayments=customerPayments
-
 db.customerRequests=customerRequests
-
-
-const event = require("../model/eventManager/event.model")(sequelize, Sequelize)
-const task = require("../model/eventManager/task.model")(sequelize, Sequelize)
 
 
 db.event = event
 db.task = task
+
+
 module.exports = db;
