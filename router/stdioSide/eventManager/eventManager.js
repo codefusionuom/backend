@@ -19,4 +19,4 @@ router.get("/getOnedayEvents", getOnedayEvents);
 router.get("/todayEvent", getTodayEvents);
 router.post("/selectedDayEvents", getSelectedDayEvents);
 
-module.exports = router;
+module.exports = router;//
