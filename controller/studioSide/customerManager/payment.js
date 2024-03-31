@@ -61,7 +61,7 @@ try {
 } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Customer");
-}
+}   
 })
 
 exports.getSearchPayment=async(req,res)=>{

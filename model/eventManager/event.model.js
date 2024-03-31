@@ -20,12 +20,15 @@ module.exports = (sequelize, Sequelize) => {
         // unique: 'uniqueTag',
       },
       customerId: {
-        // references:{
-        //   model:''
-        //     type: Sequelize.STRING,
-        // },
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+            model: "customers", 
+            key: 'id'
+          } 
       },
+      // eventDetails: {
+
+      // }
     });
       return event
     };

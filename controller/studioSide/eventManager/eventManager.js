@@ -5,6 +5,7 @@ const Event = db.event;
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
+const Customer = db.customers;
 
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
@@ -99,7 +100,7 @@ try {
 
 const allEvents = asyncHandler(async(req, res) =>{
  try {
-   const events = await Event.findAll();
+   const events = await Event.findAll( { include: [Customer]});
    if(!events) res.status(400).json({ message: "Could not get events !"});
  res.status(200).json({events : events})
  } catch (error) {
@@ -135,8 +136,9 @@ const filterEventsBetween = asyncHandler(async(req, res) =>{
 const getOnedayEvents = asyncHandler(async (req, res) => {
   await Event.findAll({
     where: {
-      serviceType: "one day services",
+      serviceType: "one day services"
     },
+    include: [Customer]
   })
     .then((result) => res.status(200).json({ oneDayEvents: result }))
     .catch((error) => res.status(404).json({ error: error }));
@@ -224,6 +226,30 @@ const getSelectedDayEvents =  asyncHandler(async(req, res) =>{
 })
 
 
+const getCustomer= asyncHandler( async(req,res) => {
+  console.log("searching customer")
+  const {mobilePhone} =req.body;
+  console.log(mobilePhone);
+  try {
+    // { where: { eventId: eventId } }
+      const data = await Customer.findAll({
+        where: {
+          mobilePhone: { 
+            [Op.like]: `%${mobilePhone}%`
+          },
+        },  
+      });
+      console.log("data "+ data);
+      console.log( data);
+        res.status(200).json(data)  
+  } catch (error) {
+      res.status(400)
+  throw new Error(error.message || "can't find Customer") 
+  }
+
+}
+
+)
 
 function setToStartOfDay(date) {
   const newDate = new Date(date);
@@ -258,5 +284,6 @@ module.exports = {
   filterEventsBetween,
   getOnedayEvents,
   getTodayEvents,
-  getSelectedDayEvents
+  getSelectedDayEvents,
+  getCustomer
 };
