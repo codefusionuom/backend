@@ -6,36 +6,40 @@ const CustomerRequests = db.customerRequests;
 exports.createCustomerRequest=asyncHandler(async(req)=>{
 console.log("create customer request")
 try {
-const {firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note}=req
+const {firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note,status}=req
     const customerRequest = {
-        firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note
+        firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note,status
         
     };
     console.log(customerRequest);
     const data = await CustomerRequests.create(customerRequest)
-    res.status(200).json(data);
+    console.log("request entered",data);
 
 } catch (error) {
-    res.status(400);
-    throw new Error(error.message || "can't create Customer Request");
+
+    throw new Error(error || "can't create Customer Request");
 }
 
 })
 
-exports.getCustomerRequests = asyncHandler(async (req, res) => {
-    const page = req.params.page;
-    let limit = 4;
+exports.getAllCustomerRequests = asyncHandler(async (req,res) => {
+    console.log("get all customer requests");
+    const {status,active,limit}=req.body
+    const page = active;
     let offset = limit * (page - 1)
+  
+    console.log(page,req.body);
     try {
         const data = await CustomerRequests.findAndCountAll({
             limit: limit,
             offset: offset,
+            where:{status:status},
             order: [['createdAt', 'DESC']],
         })
-        res.status(200).json(data)
-
+     console.log("data")
+     res.json(data)
     } catch (error) {
-        res.status(400);
-        throw new Error(error.message || "can't get Customer");
+        res.status(400)
+        throw new Error(error.message || "can't get CustomerRequest");
     }
 })

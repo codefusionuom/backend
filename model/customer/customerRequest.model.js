@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const customerRequests = sequelize.define("customers", {
+    const customerRequests = sequelize.define("customerRequests", {
       firstname: {
         type: Sequelize.STRING
       },
@@ -8,11 +8,11 @@ module.exports = (sequelize, Sequelize) => {
       },
       email: {
         type: Sequelize.STRING,
-        unique: 'uniqueTag',
+
       },
       mobilePhone: {
         type: Sequelize.STRING,
-        unique: 'uniqueTag',
+   
       },
       address: {
         type: Sequelize.STRING
@@ -21,10 +21,14 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       },
       serviceDate: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
       },
       note: {
         type: Sequelize.STRING,
+      },
+      status: {
+        type: Sequelize.ENUM,
+        values: ['inprogress', 'completed','rejected']
       },
 
     });

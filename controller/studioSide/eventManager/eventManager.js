@@ -251,6 +251,12 @@ const generateId = ()=>{
 
 }
 
+const getEventByMobilePhone =(req,res)=>{
+
+}
+
+
+
 module.exports = {
   createEvent,
   updateEvent,
@@ -258,5 +264,6 @@ module.exports = {
   filterEventsBetween,
   getOnedayEvents,
   getTodayEvents,
-  getSelectedDayEvents
+  getSelectedDayEvents,
+  getEventByMobilePhone
 };
