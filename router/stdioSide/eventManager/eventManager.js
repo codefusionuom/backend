@@ -18,5 +18,10 @@ router.get("/eventManager/eventRequests",);
 router.get("/eventManager/eventCalandar",);
 router.get("/eventManager/assignEmployee/:id",);
 router.get("/eventManager/events",);
+router.get("/eventManager/FilterEvents/:status",);
+router.get("/Filter/Between",filterEventsBetween);
+router.get("/getOnedayEvents", getOnedayEvents);
+router.get("/todayEvent", getTodayEvents);
+router.post("/selectedDayEvents", getSelectedDayEvents);
 
 module.exports = router;//

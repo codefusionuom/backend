@@ -277,6 +277,12 @@ const generateId = ()=>{
 
 }
 
+const getEventByMobilePhone =(req,res)=>{
+
+}
+
+
+
 module.exports = {
   createEvent,
   updateEvent,

@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler")
 const db = require("../../../config/db.config");
 const { Op } = require("sequelize");
 const Customer = db.customers;
-
+const Event = db.event;
 
 
 exports.createCustomers = asyncHandler(async (req, res) => {
@@ -119,5 +119,58 @@ exports.getSearchCustomer=asyncHandler(async(req,res)=>{
     }
 
 }
-
 )
+
+exports.getSearchCustomerEvents=asyncHandler(async(req,res)=>{
+    console.log("serch customer events")
+    const mobilePhone = req.params.mobilePhone;
+    try {
+        const data = await Event.findAll({
+            attributes: ['id','serviceType','date'],
+            include: [
+              {
+                model: Customer,
+                attributes: ['id','firstname', 'lastname'],
+                where: {mobilePhone: mobilePhone }
+              }
+            ]
+          })
+          res.status(200).json(data)  
+    } catch (error) {
+        res.status(400)
+    throw new Error(error.message || "can't find Customer") 
+    }
+
+}
+)
+
+// exports.getSearchCustomerEvents=asyncHandler(async(req,res)=>{
+//     console.log("serch customer events")
+//     const mobilePhone = req.params.mobilePhone;
+//     try {
+//         // const data =await Event.findOne({
+//         //         where: {
+//         //             [Op.or]: [
+//         //                 { mobilePhone: query },
+//         //                 { email: query },
+//         //               ] 
+//         //         }
+//         //   })
+//           const data = await Event.findOne({
+//             attributes: ['id','serviceType','date'],
+//             include: [
+//               {
+//                 model: Customer,
+//                 attributes: ['id','firstname', 'lastname'],
+//                 where: {mobilePhone: mobilePhone }
+//               }
+//             ]
+//           })
+//           res.status(200).json(data)  
+//     } catch (error) {
+//         res.status(400)
+//     throw new Error(error.message || "can't find Customer") 
+//     }
+
+// }
+// )
