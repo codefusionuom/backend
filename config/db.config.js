@@ -102,4 +102,35 @@ const task = require("../model/eventManager/task.model")(sequelize, Sequelize)
 
 db.event = event
 db.task = task
+
+
+
+/////// EmployeeManager
+
+const employee = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
+const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
+const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
+
+/// 1:M
+employee.hasMany(attendance, { foreignKey: 'id' });
+attendance.belongsTo(employee, { foreignKey: 'id' });
+
+///1:1
+// employeePaymentDetails.belongsTo(employee, { foreignKey: 'id' });
+// employee.hasOne(employeePaymentDetails, { foreignKey: 'id' });
+
+
+
+
+db.employee = employee
+db.employeePaymentDetails = employeePaymentDetails
+db.attendance = attendance
+
+
+
+
+///////
+
+
+
 module.exports = db;
