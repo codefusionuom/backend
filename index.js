@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 require('dotenv').config();
-const database=require("./config/mssql.js")
+// const database=require("./config/mssql.js")
 const socketIo = require('socket.io');
 
 app.use(express.json())
@@ -20,7 +20,6 @@ db.sequelize.sync();
 
 
 const { createCustomerRequest } = require('./controller/studioSide/customerManager/customerRequest.js');
-
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 
@@ -36,7 +35,7 @@ app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
 
 
 
-// app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`))
+
 
 const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
 
@@ -51,10 +50,10 @@ io.on('connection', (socket) => {
   console.log('A user connected');
 
   socket.on('customerRequest', (req) => {
-    console.log('customer request',req);
+    // console.log('customer request',req);
     createCustomerRequest(req)
     io.emit("customerRequest",req)
-  });
+  })
 });
 
 //error handling middlewares

@@ -13,7 +13,7 @@ const {firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,
     };
     console.log(customerRequest);
     const data = await CustomerRequests.create(customerRequest)
-    console.log("request entered",data);
+    console.log("request entered",data)
 
 } catch (error) {
 

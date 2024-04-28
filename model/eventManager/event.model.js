@@ -2,7 +2,7 @@ const { ENUM } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
   
-    const event = sequelize.define("event", {
+    const events = sequelize.define("events", {
       eventId: {
         type: Sequelize.STRING
       },
@@ -20,12 +20,12 @@ module.exports = (sequelize, Sequelize) => {
         // unique: 'uniqueTag',
       },
       customerId: {
-        // references:{
-        //   model:''
-        //     type: Sequelize.STRING,
-        // },
-        type: Sequelize.STRING
-      },
+        type: Sequelize.INTEGER,
+        references: {
+            model: "customers", 
+            key: 'id'
+          } 
+      }
     });
-      return event
+      return events
     };
