@@ -19,7 +19,8 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
     status: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.INTEGER,
+      defaultValue: 0 
     }
   });
     return customers

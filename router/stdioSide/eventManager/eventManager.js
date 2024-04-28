@@ -1,5 +1,5 @@
 const express =require('express');
-const { createEvent, updateEvent, allEvents, test, filterEventsBetween, getOnedayEvents, getTodayEvents, getSelectedDayEvents } = require('../../../controller/studioSide/eventManager/eventManager');
+const { createEvent, updateEvent, allEvents, test, filterEventsBetween, getOnedayEvents, getTodayEvents, getSelectedDayEvents ,getEventByMobilePhone} = require('../../../controller/studioSide/eventManager/eventManager');
 const router = express.Router();
 const db = require("../../../config/db.config");
 //event Manager
@@ -18,5 +18,7 @@ router.get("/Filter/Between",filterEventsBetween);
 router.get("/getOnedayEvents", getOnedayEvents);
 router.get("/todayEvent", getTodayEvents);
 router.post("/selectedDayEvents", getSelectedDayEvents);
+
+router.get("/getEventByobilePhone", getEventByMobilePhone);
 
 module.exports = router;//

@@ -2,20 +2,13 @@ const asyncHandler = require("express-async-handler")
 const db = require("../../../config/db.config");
 const { Op } = require("sequelize");
 const Customer = db.customers;
-
+const Event = db.events;
 
 
 exports.createCustomers = asyncHandler(async (req, res) => {
 
     const { firstname, lastname, email, address, mobilePhone, status } = req.body
-    if (email) {
-        const oldCustomer = await Customer.findOne({ where: { email: email } })
-        if (oldCustomer) {
-            console.log(oldCustomer)
-            res.status(400).send({ message: "Customer already exist" });
-            return
-        }
-    } else if (mobilePhone) {
+    if (mobilePhone) {
         const oldCustomer = await Customer.findOne({ where: { mobilePhone: mobilePhone } })
         if (oldCustomer) {
             res.status(400).send({ message: "Customer already exist" });
@@ -30,7 +23,7 @@ exports.createCustomers = asyncHandler(async (req, res) => {
     try {
         const customer = {
             firstname, lastname, email, address, mobilePhone,
-            status: status ? status : false
+            status:0
         };
         console.log(customer);
         const data = await Customer.create(customer)
@@ -52,7 +45,7 @@ exports.deleteCustomer = asyncHandler(async (req, res) => {
     }
     try {
 
-        const data = await Customer.findOne({
+        const data = await Customer.destroy({
             where: { id: id },
             returning: true
         })
@@ -100,7 +93,7 @@ exports.getCustomers = asyncHandler(async (req, res) => {
 })
 
 
-exports.getSearchCustomer=async(req,res)=>{
+exports.getSearchCustomer=asyncHandler(async(req,res)=>{
     console.log("serch customer")
     const query=req.query.search;
     try {
@@ -119,4 +112,59 @@ exports.getSearchCustomer=async(req,res)=>{
     }
 
 }
+)
 
+exports.getSearchCustomerEvents=asyncHandler(async(req,res)=>{
+    console.log("serch customer events")
+    const mobilePhone = req.params.mobilePhone;
+    try {
+        const data = await Event.findAll({
+            attributes: ['id','serviceType','date'],
+            include: [
+              {
+                model: Customer,
+                attributes: ['id','firstname', 'lastname'],
+                where: {mobilePhone: mobilePhone }
+              }
+            ]
+          })
+          console.log("data",data)
+          res.status(200).json(data)  
+    } catch (error) {
+        res.status(400)
+    throw new Error(error.message || "can't find Customer") 
+    }
+
+}
+)
+
+// exports.getSearchCustomerEvents=asyncHandler(async(req,res)=>{
+//     console.log("serch customer events")
+//     const mobilePhone = req.params.mobilePhone;
+//     try {
+//         // const data =await Event.findOne({
+//         //         where: {
+//         //             [Op.or]: [
+//         //                 { mobilePhone: query },
+//         //                 { email: query },
+//         //               ] 
+//         //         }
+//         //   })
+//           const data = await Event.findOne({
+//             attributes: ['id','serviceType','date'],
+//             include: [
+//               {
+//                 model: Customer,
+//                 attributes: ['id','firstname', 'lastname'],
+//                 where: {mobilePhone: mobilePhone }
+//               }
+//             ]
+//           })
+//           res.status(200).json(data)  
+//     } catch (error) {
+//         res.status(400)
+//     throw new Error(error.message || "can't find Customer") 
+//     }
+
+// }
+// )
