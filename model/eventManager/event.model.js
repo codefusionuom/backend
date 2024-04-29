@@ -2,7 +2,7 @@ const { ENUM } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
   
-    const event = sequelize.define("event", {
+    const events = sequelize.define("events", {
       eventId: {
         type: Sequelize.STRING
       },
@@ -30,5 +30,5 @@ module.exports = (sequelize, Sequelize) => {
 
       // }
     });
-      return event
+      return events
     };

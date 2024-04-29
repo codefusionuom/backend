@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 // const Event = require("../../../model/eventManager/event.model");
-const Event = db.event;
+const Event = db.events;
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
@@ -30,14 +30,7 @@ const createEvent = asyncHandler(async (req, res) => {
       console.log("corrected date: ", correctedDate);
       console.log("eveent id: ", eventId);
       console.log("custormer : ", customerId);
-      
-      // const inputDate = new Date(date);
-      // const formattedDate = inputDate.toLocaleDateString('en-GB', {
-      //   day: '2-digit',
-      //   month: '2-digit',
-      //   year: 'numeric',
-      // });
-      // console.log(formattedDate);
+   
       console.log("{} event ID :" ,eventId);
       if(eventId){
       existingEvent = await Event.findOne({ where: { eventId: eventId } })
@@ -218,6 +211,8 @@ const getSelectedDayEvents =  asyncHandler(async(req, res) =>{
           [Op.between] : [todayBegin , endOfDay ]
         }
       }
+      ,
+      include: [Customer]
     }).then((result) => res.status(200).json({ todayEvents: result }))
     .catch((error) => res.status(404).json({ error: error }));
   } catch (error) {
@@ -251,6 +246,17 @@ const getCustomer= asyncHandler( async(req,res) => {
 
 )
 
+const getEvent = asyncHandler(async(req, res) => {
+  const { eventId } = req.params;
+  console.log(eventId);
+  const data = await Event.findOne({ where: { eventId: eventId } ,include :[Customer]  })
+  // .then((data) => {res.status(200).json(data)}).catch((err) => {
+  //   res.status(500).json({ error: err})
+  // })
+  if(data) res.status(200).json(data)
+  if(!data) res.status(400).json({error: error})
+});
+
 function setToStartOfDay(date) {
   const newDate = new Date(date);
   newDate.setUTCHours(0, 0, 0, 0); // Set hours, minutes, seconds, milliseconds to 0
@@ -277,10 +283,6 @@ const generateId = ()=>{
 
 }
 
-const getEventByMobilePhone =(req,res)=>{
-
-}
-
 
 
 module.exports = {
@@ -291,5 +293,6 @@ module.exports = {
   getOnedayEvents,
   getTodayEvents,
   getSelectedDayEvents,
-  getCustomer
+  getCustomer,
+  getEvent
 };
