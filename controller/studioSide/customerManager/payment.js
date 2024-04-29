@@ -8,17 +8,19 @@ const Customer = db.customers;
 
 exports.createPayment=asyncHandler(async(req,res)=>{
 
-const {description,customerId , payment, offers, amount, type, status } = req.body
+const {description,customerId ,eventId, payment, offers, amount, type, status } = req.body
 
 try {
     const pay={
-        description,customerId , payment, offers, amount, type:type || "offline", status:status || "full"
+        description,customerId,eventId , payment, offers, amount, type:type || "offline", status:status || "full"
     }
-    console.log("create payment",pay);
     const data=await CustomerPayment.create(pay)
+    
+    console.log("create payment",data);
             res.status(200).json(data);  
 } catch (error) {
     res.status(400);
+    console.log(error.message);
     throw new Error(error.message || "Some error occurred while creating the Customer");
 }
 
@@ -30,11 +32,13 @@ exports.getCustomerPayment=asyncHandler(async(req,res)=>{
     const page = req.params.page;
     let limit=4;
     let offset=limit*(page-1)
+    console.log("lmit",limit,offset)
 try {
    const data=await CustomerPayment.findAndCountAll({
         limit: limit,
         offset: offset,
     })
+    // console.log(data)
     res.status(200).json(data)
  
 } catch (error) {
@@ -65,13 +69,13 @@ exports.getSearchPayment=async(req,res)=>{
     const page = req.query.page;
     let limit=4;
     let offset=limit*(page-1)
-   // console.log(req.query.date,query,page)
+   console.log(req.query,query,page)
   // const date = moment(new Date("2024-02-02T09:16:22.103Z"), 'MM-DD-YYYY')
    // const parsedDate = moment(req.query.date, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
     // console.log(req.query.date,date)
     try {
         const data =await CustomerPayment.findAndCountAll({
-            attributes: ['id', 'amount','payment','createdAt'],
+            attributes: ['id', 'amount','payment','createdAt','status'],
             include: [
               {
                 model: Customer,

@@ -9,6 +9,16 @@ module.exports = (sequelize, Sequelize) => {
               key: 'id'
             } 
         },
+        // eventId:{
+        //   type:Sequelize.STRING
+        // },
+        // eventId: {
+        //   type: Sequelize.INTEGER,
+        //   // references: {
+        //   //     model: "customers", 
+        //   //     key: 'id'
+        //   //   } 
+        // },
         description: {
           type: Sequelize.STRING
         },
