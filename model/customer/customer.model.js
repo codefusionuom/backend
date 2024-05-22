@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING
     },
     status: {
-      type: Sequelize.NUMBER,
+      type: Sequelize.INTEGER,
       defaultValue: 0 
     }
   });

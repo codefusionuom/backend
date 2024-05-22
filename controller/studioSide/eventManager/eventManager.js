@@ -6,6 +6,7 @@ const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
 const Customer = db.customers;
+const Employee = db.employee;
 
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
@@ -39,7 +40,7 @@ const createEvent = asyncHandler(async (req, res) => {
       // return res.status(400).json({ message: "Event already exists"  , existingEvent : existingEvent });
 
       // }).catch(function (error) {
-      //   console.log("Event B error: ", error);
+      //   console.log( "Event B error: ", error);
       // })
 
     // eventId = "gnsiphnsiphins";
@@ -100,6 +101,8 @@ const allEvents = asyncHandler(async(req, res) =>{
   res.status(400).json({ message: error.message });
  }
 })
+
+
 
 const filterEventsBetween = asyncHandler(async(req, res) =>{
 
@@ -285,6 +288,17 @@ const generateId = ()=>{
 
 
 
+const getAllEmployees = asyncHandler(async(req, res) =>{
+  try {
+    const employees = await Employee.findAll( { include: [Employee]});
+    if(!employees) res.status(400).json({ message: "Could not get employees !"});
+  res.status(200).json({employees : employees})
+  } catch (error) {
+   res.status(400).json({ message: error.message });
+  }
+ })
+ 
+
 module.exports = {
   createEvent,
   updateEvent,
@@ -294,5 +308,6 @@ module.exports = {
   getTodayEvents,
   getSelectedDayEvents,
   getCustomer,
-  getEvent
+  getEvent,
+  getAllEmployees
 };

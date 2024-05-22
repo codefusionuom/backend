@@ -1,18 +1,16 @@
 
 
 module.exports = (sequelize, Sequelize) => {
-    const task = sequelize.define("task", {
+    const tasks = sequelize.define("tasks", {
       eventId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'events',
+          key: 'id',  
+       }
       },
       taskName:{
         type:Sequelize.STRING,
-      },
-      taskId: {
-        type: Sequelize.INTEGER,
-        // unique: 'uniqueTag',
-        primaryKey: true,
-        autoIncrement: true
       },
       serviceType: {
         type: Sequelize.ENUM,
@@ -30,5 +28,5 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       }
     });
-      return task
+      return tasks
     };

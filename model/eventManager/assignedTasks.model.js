@@ -3,19 +3,25 @@ module.exports = (sequelize, Sequelize) => {
   
     const assignedTasks = sequelize.define("assignedTasks", {
       eventId: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'events',
+          key: 'id',  
+       }
       },
       empId: {
         type: Sequelize.INTEGER,
-        unique: true,
-        primaryKey: true
-        // autoIncrement: true,
+        references: {
+          model: 'employees',
+          key: 'id',  
+       }
       },
       taskId: {
         type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        primaryKey: true
+        references: {
+          model: 'tasks',
+          key: 'id',  
+       }
       },
     });
       return assignedTasks;

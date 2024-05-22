@@ -1,8 +1,9 @@
 const express =require('express');
-const { createEvent, updateEvent, allEvents, test, filterEventsBetween, getOnedayEvents, getTodayEvents, getSelectedDayEvents, getCustomer, getEvent } = require('../../../controller/studioSide/eventManager/eventManager');
+const { createEvent, updateEvent, allEvents, test, filterEventsBetween, getOnedayEvents, getTodayEvents, getSelectedDayEvents, getCustomer, getEvent, getAllEmployees } = require('../../../controller/studioSide/eventManager/eventManager');
 const router = express.Router();
 const db = require("../../../config/db.config");
 const { createTask } = require('../../../controller/studioSide/eventManager/task');
+const { createAssignedTask } = require('../../../controller/studioSide/eventManager/assignedTasks');
 //event Manager
 router.get("/Filter/Between",filterEventsBetween);
 router.get("/getOnedayEvents", getOnedayEvents);
@@ -22,7 +23,9 @@ router.get("/eventManager/events",);
 
 
 router.post("/tasks/create", createTask);
+router.post("/tasks/assigned-Task/create", createAssignedTask);
 
+router.get("/all-employees", getAllEmployees);
 
 
 module.exports = router;//

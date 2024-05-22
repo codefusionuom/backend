@@ -30,26 +30,39 @@ db.sequelize = sequelize;
 const customers=require("../model/customer/customer.model")(sequelize, Sequelize)
 const customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
 const customerRequests=require("../model/customer/customerRequest.model")(sequelize, Sequelize)
+const customerServices=require("../model/customer/customerService.model")(sequelize, Sequelize)
+
 
 const events = require("../model/eventManager/event.model")(sequelize, Sequelize)
 const tasks = require("../model/eventManager/task.model")(sequelize, Sequelize)
 const assignedTasks = require("../model/eventManager/assignedTasks.model")(sequelize , Sequelize)
 
-customers.hasMany(customerPayments);
-customerPayments.belongsTo(customers);
+// customers.hasMany(customerPayments);
+// customerPayments.belongsTo(customers);
+customerServices.belongsTo(customerServices, { as: 'parent', foreignKey: 'parentService' });
+
 customers.hasMany(events);
 events.belongsTo(customers);
+
 events.hasMany(tasks);
 tasks.belongsTo(events);
+tasks.hasMany(assignedTasks);
+assignedTasks.belongsTo(tasks);
+
+
+
+events.hasMany(customerPayments);
+customerPayments.belongsTo(events);
 
 
 db.customers=customers
 db.customerPayments=customerPayments
 db.customerRequests=customerRequests
+db.customerServices=customerServices
 
 
 db.events = events
 db.tasks = tasks
-// db.assignedTasks = assignedTasks
+db.assignedTasks = assignedTasks
 
 module.exports = db;

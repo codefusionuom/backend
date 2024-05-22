@@ -12,6 +12,7 @@ const createTask = asyncHandler(async (req, res) => {
           status,
           description,
         } = req.body;
+        console.log("eeeeeeeeeeeeeventId: " + eventId);
         const task = await Task.create({
             eventId : eventId,
             taskName : taskName,
@@ -20,6 +21,7 @@ const createTask = asyncHandler(async (req, res) => {
             status : status,
             description : description
         })
+        console.log("eeeeeeeeeeeeeventId: " + eventId);
     if(!task) return res.status(400).json({ message: "Task creation was not successful!" });
         res.status(200).json({ message: "Task created successfully!" });
     } catch (error) {
