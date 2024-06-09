@@ -12,6 +12,9 @@ module.exports = (sequelize, Sequelize) => {
       taskName:{
         type:Sequelize.STRING,
       },
+      date : {
+        type : Sequelize.DATE
+      },
       serviceType: {
         type: Sequelize.ENUM,
         values: ['editing' , 'photography' , 'one day services']

@@ -297,7 +297,37 @@ const getAllEmployees = asyncHandler(async(req, res) =>{
    res.status(400).json({ message: error.message });
   }
  })
- 
+
+ const getEmployees = asyncHandler(async (req, res) => {
+  // const page = req.params.page;
+  // let limit = 4;
+  // let offset = limit * (page - 1)
+  try {
+      const { count, rows } = await Employee.findAndCountAll({
+          limit: 10,
+          // limit: limit,
+          // offset: offset,
+      });
+
+      const employees = rows;
+
+      if (!employees || employees.length === 0) {
+          res.status(200).json([]);
+      } else {
+          res.status(200).json(employees);
+          console.log(employees)
+      }
+  } catch (error) {
+      console.error("Error fetching employees:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+ const getAllEventTypes = asyncHandler(async(req, res) =>{
+  let eventTypes = [];
+
+ })
 
 module.exports = {
   createEvent,

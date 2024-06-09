@@ -34,6 +34,7 @@ exports.createEmployee = asyncHandler(async (req, res) => {
 
 
 exports.getEmployees = asyncHandler(async (req, res) => {
+    console.log("came by------------------------------------------------------------------")
     // const page = req.params.page;
     // let limit = 4;
     // let offset = limit * (page - 1)
@@ -50,7 +51,7 @@ exports.getEmployees = asyncHandler(async (req, res) => {
             res.status(200).json([]);
         } else {
             res.status(200).json(employees);
-            console.log(employees)
+            // console.log(employees)
         }
     } catch (error) {
         console.error("Error fetching employees:", error);

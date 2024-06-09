@@ -38,7 +38,6 @@ app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
 
 
 
-
 const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
 
 // Set up Socket.IO

@@ -37,6 +37,10 @@ const events = require("../model/eventManager/event.model")(sequelize, Sequelize
 const tasks = require("../model/eventManager/task.model")(sequelize, Sequelize)
 const assignedTasks = require("../model/eventManager/assignedTasks.model")(sequelize , Sequelize)
 
+const employee = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
+const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
+const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
+
 // customers.hasMany(customerPayments);
 // customerPayments.belongsTo(customers);
 customerServices.belongsTo(customerServices, { as: 'parent', foreignKey: 'parentService' });
@@ -46,9 +50,12 @@ events.belongsTo(customers);
 
 events.hasMany(tasks);
 tasks.belongsTo(events);
-tasks.hasMany(assignedTasks);
-assignedTasks.belongsTo(tasks);
 
+assignedTasks.belongsTo(tasks);
+assignedTasks.belongsTo(employee);
+
+tasks.hasMany(assignedTasks);
+employee.hasMany(assignedTasks)
 
 
 events.hasMany(customerPayments);
@@ -64,5 +71,25 @@ db.customerServices=customerServices
 db.events = events
 db.tasks = tasks
 db.assignedTasks = assignedTasks
+
+
+/// 1:M
+employee.hasMany(attendance, { foreignKey: 'id' });
+attendance.belongsTo(employee, { foreignKey: 'id' });
+
+
+///1:1
+// employeePaymentDetails.belongsTo(employee, { foreignKey: 'id' });
+// employee.hasOne(employeePaymentDetails, { foreignKey: 'id' });
+
+
+
+
+db.employee = employee
+db.employeePaymentDetails = employeePaymentDetails
+db.attendance = attendance
+
+
+
 
 module.exports = db;
