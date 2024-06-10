@@ -4,6 +4,40 @@ const db = require("../../../config/db.config");
 const { rows } = require("mssql");
 const Task = db.tasks;
 const AssignedTask = db.assignedTasks;
+// const createTask = asyncHandler(async (req, res) => {
+//     try {
+//         const {
+//           eventId,
+//           taskName,
+//           serviceType,
+//           department,
+//           status,
+//           description,
+//         } = req.body;
+//         let { date} = req.body;
+        
+
+
+//     var selectedDateWithOnedayOff = new Date(date);
+//     const correctedDate =  new Date( selectedDateWithOnedayOff.getTime() + Math.abs(selectedDateWithOnedayOff.getTimezoneOffset()*60000) );
+        
+//     console.log("eeeeeeeeeeeeeventId: " + eventId);
+//         const task = await Task.create({
+//             eventId : eventId,
+//             taskName : taskName,
+//             serviceType : serviceType,
+//             department : department,
+//             status : status,
+//             description : description,
+//             date : correctedDate
+//         })
+//         console.log("eeeeeeeeeeeeeventId: " + eventId);
+//     if(!task) return res.status(400).json({ message: "Task creation was not successful!" });
+//         res.status(200).json({ message: "Task created successfully!" });
+//     } catch (error) {
+//         res.status(500).json({ message: "Could not create the Task!" , error: error.message  });        
+//     }
+// });
 const createTask = asyncHandler(async (req, res) => {
     try {
         const {
@@ -13,29 +47,60 @@ const createTask = asyncHandler(async (req, res) => {
           department,
           status,
           description,
+          employeeIdList,  // Assuming you have a list of employees to assign
+        //   taskId, 
         } = req.body;
-        let { date} = req.body;
+        let { date } = req.body;
 
-    var selectedDateWithOnedayOff = new Date(date);
-    const correctedDate =  new Date( selectedDateWithOnedayOff.getTime() + Math.abs(selectedDateWithOnedayOff.getTimezoneOffset()*60000) );
+        // Correct the date for timezone offset
+        const selectedDateWithOnedayOff = new Date(date);
+        const correctedDate = new Date(selectedDateWithOnedayOff.getTime() + Math.abs(selectedDateWithOnedayOff.getTimezoneOffset() * 60000));
         
-    console.log("eeeeeeeeeeeeeventId: " + eventId);
-        const task = await Task.create({
-            eventId : eventId,
-            taskName : taskName,
-            serviceType : serviceType,
-            department : department,
-            status : status,
-            description : description,
-            date : correctedDate
-        })
-        console.log("eeeeeeeeeeeeeventId: " + eventId);
-    if(!task) return res.status(400).json({ message: "Task creation was not successful!" });
+        // Start a transaction
+        await db.sequelize.transaction(async (transaction) => {
+            // Create the task
+            const task = await Task.create({
+                eventId,
+                taskName,
+                serviceType,
+                department ,
+                status ,
+                description,
+                date: correctedDate
+            }, { transaction });
+
+            if (!task) {
+                throw new Error("Task creation was not successful!");
+            }
+
+            // Perform additional operations (e.g., assign employees)
+            if (employeeIdList && employeeIdList.length > 0) {
+                for (const employeeId of employeeIdList) {
+                    const assignedTask = await AssignedTask.create({
+                        eventId,
+                        empId: employeeId,
+                        taskId: task.id  // Use the ID of the created task
+                    }, { transaction });
+
+                    if (!assignedTask) {
+                        throw new Error("Assigning task to employee was not successful!");
+                    }
+                }
+            }
+
+            // Optionally, perform more operations within this transaction block
+            // ...
+
+            // If all operations succeed, the transaction will be committed automatically
+        });
+
         res.status(200).json({ message: "Task created successfully!" });
     } catch (error) {
-        res.status(500).json({ message: "Could not create the Task!" , error: error.message  });        
+        console.error("Error in createTask:", error.message);
+        res.status(500).json({ message: "Could not create the Task!", error: error.message });
     }
 });
+
 
 
 
