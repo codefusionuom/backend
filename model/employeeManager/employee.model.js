@@ -1,11 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const employee = sequelize.define("employee", {
-    empId: {
-      type: Sequelize.INTEGER,
-      unique: true,
-      allowNull: false,
-      // autoIncrement: true,
-    },
+  const employees = sequelize.define("employees", {
     empName: {
       type: Sequelize.STRING
     },
@@ -27,5 +21,5 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
     }
   });
-  return employee;
+  return employees;
 };

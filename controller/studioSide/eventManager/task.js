@@ -4,6 +4,8 @@ const db = require("../../../config/db.config");
 const { rows } = require("mssql");
 const Task = db.tasks;
 const AssignedTask = db.assignedTasks;
+const Employee = db.employee;
+
 // const createTask = asyncHandler(async (req, res) => {
 //     try {
 //         const {
@@ -75,10 +77,10 @@ const createTask = asyncHandler(async (req, res) => {
 
             // Perform additional operations (e.g., assign employees)
             if (employeeIdList && employeeIdList.length > 0) {
-                for (const employeeId of employeeIdList) {
+                for (const emplyeeId of employeeIdList) {
                     const assignedTask = await AssignedTask.create({
                         eventId,
-                        empId: employeeId,
+                        emplyId : emplyeeId,
                         taskId: task.id  // Use the ID of the created task
                     }, { transaction });
 
@@ -119,15 +121,16 @@ const getEventCategories = asyncHandler(async (req, res) => {   //get service ty
 const getTasksByEmployeeId = asyncHandler(async (req, res) => { 
     try {
         console.log("cameeeeeee--------------------------------------------")
-        const { empId } = req.query;
-        console.log("EmpId :" + empId);
+        const { emplyId } = req.query;
+        // const emplyId = empId;
+        console.log("emplyId :" + emplyId);
         // const data = await Event.findOne({ where: { eventId: eventId } ,include :[Customer]  })
         
         const { count, rows } = await AssignedTask.findAndCountAll({
             where: {
-              empId:empId,
+                emplyId,
             },
-            include: [Task],
+            include: [{model :Employee} , {model: Task}],
             // offset: 10,
             // limit: 10,
           });

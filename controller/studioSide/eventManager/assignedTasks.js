@@ -3,50 +3,20 @@ const db = require("../../../config/db.config");
 const AssignedTask = db.assignedTasks;
 const { Sequelize } = require("sequelize");
 
-// const createAssignedTask = asyncHandler(async (req, res) => {
-//    try {
-//     //  console.log("req body : " + req.body)
-//     // const employeeIdList = []
-//      const { eventId , employeeIdList , taskId } = req.body;
-//      console.log("eventId :" ,eventId, "  employeeIdList", employeeIdList , "  taskId" , taskId);
- 
-//     //  employeeIdList.map(async(employeeId) => {
-//     //   let assignedTask = await db.sequelize.transaction( AssignedTask.create({
-//     //     eventId,
-//     //     empId : employeeId,
-//     //     taskId
-//     // }))
-//     await db.sequelize.transaction(async ()=>{
-//       employeeIdList.map(async(employeeId) => {
-//       let assignedTask =  AssignedTask.create({
-//         eventId,
-//         empId : employeeId,
-//         taskId
-//     })
-//     if (!assignedTask)  return res.status(400).json({ message: "Task assigning  was not successful!" });
-//     })})
-//     //  })
 
-    
-    
-//      res.status(200).json({ message: "Task assigned successfully!" });
- 
-//    } catch (error) {
-//     res.status(500).json({ message: "Task assigning  was not successful!" , error: error.message  });
-//    }
-// })
 
 
 const createAssignedTask = asyncHandler(async (req, res) => {
+  console.log("ggggg-------------------------------------------------------------------")
   const { eventId, employeeIdList, taskId } = req.body;
   console.log("eventId:", eventId, "employeeIdList:", employeeIdList, "taskId:", taskId);
 
   try {
     await db.sequelize.transaction(async (transaction) => {
-      const promises = employeeIdList.map(employeeId => 
+      const promises = employeeIdList.map(empId => 
         AssignedTask.create({
           eventId,
-          empId: employeeId,
+          emplyId : empId,
           taskId,
         }, { transaction })
       );

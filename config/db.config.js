@@ -51,12 +51,23 @@ events.belongsTo(customers);
 events.hasMany(tasks);
 tasks.belongsTo(events);
 
-assignedTasks.belongsTo(tasks);
-assignedTasks.belongsTo(employee);
+// assignedTasks.belongsTo(tasks);
+// assignedTasks.belongsTo(employee);
 
-tasks.hasMany(assignedTasks);
-employee.hasMany(assignedTasks)
+// tasks.hasMany(assignedTasks);
+// employee.hasMany(assignedTasks)
 
+
+
+//sequlize doc-yasith
+// employee.belongsToMany(tasks, { through: assignedTasks });
+// tasks.belongsToMany(employee, { through: assignedTasks });
+
+assignedTasks.belongsTo(tasks, { foreignKey: 'taskId' });
+assignedTasks.belongsTo(employee, { foreignKey: 'emplyId' });
+
+tasks.hasMany(assignedTasks, { foreignKey: 'taskId' });
+employee.hasMany(assignedTasks, { foreignKey: 'emplyId' });
 
 events.hasMany(customerPayments);
 customerPayments.belongsTo(events);

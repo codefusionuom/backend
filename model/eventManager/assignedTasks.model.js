@@ -9,11 +9,14 @@ module.exports = (sequelize, Sequelize) => {
           key: 'id',  
        }
       },
-      empId: {
+      emplyId: {
         type: Sequelize.INTEGER,
+        // primaryKey: true,
+        // autoIncrement: true,
+         //   type: Sequelize.INTEGER,
         references: {
           model: 'employees',
-          key: 'empId',  
+          key: 'id',  
        }
       },
       taskId: {
