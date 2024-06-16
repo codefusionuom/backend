@@ -26,69 +26,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// db.tutorials = require("./turorial.model")(sequelize, Sequelize);
-// db.customers=require("../model/customer/customer.model")(sequelize, Sequelize)
-// db.customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
-
-
-// const customers = sequelize.define("customers", {
-//   firstname: {
-//     type: Sequelize.STRING
-//   },
-//   lastname: {
-//     type: Sequelize.STRING
-//   },
-//   email: {
-//     type: Sequelize.STRING,
-//     unique: 'uniqueTag',
-//   },
-//   mobilePhone: {
-//     type: Sequelize.STRING,
-//     unique: 'uniqueTag',
-//   },
-//   address: {
-//     type: Sequelize.STRING
-//   },
-//   status: {
-//     type: Sequelize.BOOLEAN
-//   }
-// });
-
-
-
-
-// const customerPayments = sequelize.define("customerPayments", {
-//   customerId: {
-//     type: Sequelize.INTEGER,
-//     references: {
-//         model: "customers", 
-//         key: 'id'
-//       } 
-//   },
-//   description: {
-//     type: Sequelize.STRING
-//   },
-//   amount: {
-//     type: Sequelize.FLOAT,
-//   },
-//   offers: {
-//     type: Sequelize.FLOAT,
-//   },
-//   payment: {
-//     type: Sequelize.FLOAT,
-//   },
-//   status: {
-//     type: Sequelize.STRING
-//   },
-//   type: {
-//     type: Sequelize.STRING
-//   }
-// });
-
-// customers.hasMany(customerPayments);
-// customerPayments.belongsTo(customers);
 const customers=require("../model/customer/customer.model")(sequelize, Sequelize)
 const customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
+const admin=require("../model/superAdmin/admin.model")(sequelize, Sequelize)
 
 
 customers.hasMany(customerPayments);
@@ -97,5 +37,6 @@ customerPayments.belongsTo(customers);
 db.customers=customers
 db.customerPayments=customerPayments
 
+db.admin = admin;
 
 module.exports = db;
