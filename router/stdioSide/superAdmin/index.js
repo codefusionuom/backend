@@ -1,5 +1,8 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
+
 const router = express.Router();
+router.use(cookieParser());
 
 const {
   getAdmin,
@@ -7,7 +10,11 @@ const {
   createAdmin,
   deleteAdmin,
   getAdminByid,
-} = require("../../../controller/studioSide/superAdmin/admin");
+} = require('../../../controller/studioSide/superAdmin/admin');
+
+const {
+  getCurruntAdmin,
+} = require('../../../controller/auth');
 
 const {
   getDepartment,
@@ -18,9 +25,14 @@ const {
 } = require("../../../controller/studioSide/superAdmin/department");
 
 // admins
+      //register
+      router.post("/admin", createAdmin);
+
+      //auth
+      router.get('/admin/auth', getCurruntAdmin);
+
 router.get("/admin/:page", getAdmin);
 router.put("/admin/:id", updateAdmin);
-router.post("/admin", createAdmin);
 router.delete("/admin/:id", deleteAdmin);
 router.get("/adminId/:id", getAdminByid);
 router.get("/admin/?search");

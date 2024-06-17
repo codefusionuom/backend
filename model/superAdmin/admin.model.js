@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Admin = sequelize.define("Admin", {
+  const Admin = sequelize.define('Admin', {
     employeeName: {
       type: Sequelize.STRING,
     },
@@ -15,6 +15,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     privileges: {
       type: Sequelize.STRING,
+    },
+    password: {
+      type: Sequelize.STRING,
+      allowNull: false, // Password is required
     },
   });
   return Admin;

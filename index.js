@@ -1,12 +1,17 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 const database = require('./config/mssql.js');
+const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(bodyParser.json());
+app.use(cookieParser());
 
 const db = require('./config/db.config.js');
 db.sequelize.sync();
