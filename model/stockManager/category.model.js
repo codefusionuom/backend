@@ -1,9 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const category = sequelize.define("category", {
-        categoryId: { 
-          type: Sequelize.STRING,
-          unique: 'uniqTag',
-        },
+    const categories = sequelize.define("categories", {
        categoryName: {
           type: Sequelize.STRING
         },
@@ -13,5 +9,5 @@ module.exports = (sequelize, Sequelize) => {
        
       });
 
-    return category;
+    return categories; 
   };

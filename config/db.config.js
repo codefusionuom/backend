@@ -92,9 +92,9 @@ const customerPayments=require("../model/customer/payment.model")(sequelize, Seq
 
 //STOCK MANAGER
 const supplier=require("../model/stockManager/supplier.model")(sequelize, Sequelize)
-const category = require("../model/stockManager/category.model")(sequelize, Sequelize)
+const categories = require("../model/stockManager/category.model")(sequelize, Sequelize)
 const grn = require("../model/stockManager/grn.model")(sequelize,Sequelize)
-const stockItem = require("../model/stockManager/stockItem.model")(sequelize,Sequelize)
+const stockItems = require("../model/stockManager/stockItem.model")(sequelize,Sequelize)
 const returnedStock = require("../model/stockManager/returnedStock.model")(sequelize,Sequelize)
 const paymentStk = require("../model/stockManager/payment.model")(sequelize,Sequelize)
 
@@ -109,13 +109,16 @@ db.customers=customers
 db.customerPayments=customerPayments
 
 //stock manager
-db.supplier= supplier
-db.category = category
-db.grn = grn
-db.stockItem = stockItem
+db.suppliers= supplier
+db.categories = categories
+db.stockItems = stockItems
+db.grns = grn
 db.returnedStock = returnedStock
 db.paymentStk = paymentStk
 
+categories.hasMany(stockItems);
+stockItems.belongsTo(categories);
 
+ 
 
 module.exports = db;

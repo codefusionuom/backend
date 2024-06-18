@@ -1,10 +1,6 @@
 
 module.exports = (sequelize, Sequelize) => {
     const returnedStock = sequelize.define("returnedStock", {
-        itemId: {
-          type: Sequelize.STRING,
-          unique: 'uniqueTag5',
-        },
         itemName: {
             type: Sequelize.STRING
           },
@@ -12,16 +8,19 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.FLOAT,
             
           },
-       categoryId: {
+       category: {
           type: Sequelize.STRING,
         },
-        supplierId: {
-            type: Sequelize.STRING,
+        quantity: {
+            type: Sequelize.INTEGER,
           },
         date: {
             type: Sequelize.DATE,
           },
-            });
+        description: { 
+            type: Sequelize.STRING,
+          },
+            });    
 
-    return returnedStock;
-  };
+    return returnedStock;  
+  };   

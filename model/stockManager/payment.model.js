@@ -1,10 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
     const paymentStk = sequelize.define("paymentStk", {
-        supplierId: {
-          type: Sequelize.STRING,
-          unique: 'uniqueTag6',
-        },
         supplierName: {
+            type: Sequelize.STRING
+          },
+          itemName: {
             type: Sequelize.STRING
           },
         date: {
@@ -12,17 +11,17 @@ module.exports = (sequelize, Sequelize) => {
             
           },
        telephone: {
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING,  
         },
         quantity: {
-            type: Sequelize.INTEGER,
-          },
-        stockItem: {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER, 
           },
         price: {
             type: Sequelize.FLOAT,
           },
+        description: { 
+            type: Sequelize.STRING, 
+          }, 
        
       });
 

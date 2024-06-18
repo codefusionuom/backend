@@ -12,7 +12,7 @@ app.use(cors())
 // async function runScript(){
 //     await database.connection()
 //   }
-// runScript()
+// runScript() 
 
 
 const db = require("./config/db.config.js");
@@ -26,7 +26,6 @@ const stockManagerRouter = require("./router/stdioSide/StockManager/index.js")
 app.use("/customerManager" , customerManagerRouter)
 app.use("/stockManager" , stockManagerRouter )
 
-app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
 
 
 //error handling middlewares

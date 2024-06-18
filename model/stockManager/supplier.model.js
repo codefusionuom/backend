@@ -1,25 +1,20 @@
 
 
 module.exports = (sequelize, Sequelize) => {
-    const supplier = sequelize.define("supplier", {
-        supplierId: {
-          type: Sequelize.STRING,
-          unique: 'uniqueTag',
-        },
+    const suppliers = sequelize.define("supplier", {
         supplierName: {
             type: Sequelize.STRING
-          },
-        itemId: {
-            type: Sequelize.STRING,
-            
           },
        contactNo: {
         type: Sequelize.STRING,
         },
-        status: {
-            type: Sequelize.BOOLEAN,
+        email: {
+            type: Sequelize.STRING,
           },
+        address:{
+          type:Sequelize.STRING
+        },
             });
 
-    return supplier;
-  };
+    return suppliers;  
+  };  

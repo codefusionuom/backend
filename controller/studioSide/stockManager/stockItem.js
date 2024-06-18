@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const db = require("../../../config/db.config");
-const stockItem = db.stockItem;
+const stockItem = db.stockItems;
 
 
 
@@ -8,27 +8,17 @@ exports.createStockItem = asyncHandler(async (req, res) => {
     try {
         // Extract data from the request body
         const {
-            itemId,
             itemName,
-            categoryId,
+            itemCategory, 
             cost,
-            realCost,
-            minQty,
-            quantity,
-            status,
             description
         } = req.body;
 
         // Create a new stock item in the database
         const newStockItem = await stockItem.create({
-            itemId,
             itemName,
-            categoryId,
+            itemCategory, 
             cost,
-            realCost,
-            minQty,
-            quantity,
-            status,
             description
         });
 
@@ -46,6 +36,7 @@ exports.createStockItem = asyncHandler(async (req, res) => {
             message: 'Failed to create stock item',
             error: error.message
         });
+       
     }
 });
 
@@ -53,12 +44,12 @@ exports.createStockItem = asyncHandler(async (req, res) => {
 exports.getStockItem = asyncHandler(async (req, res) => {
     try {
         // Extract the item ID from the request parameters
-        const { itemId } = req.params;
+        const { id } = req.params;
 
         // Find the stock item by itemId
-        const foundStockItem = await stockItem.findOne({ where: { itemId } });
+        const foundStockItem = await stockItem.findOne({ where: { id } });
 
-        // If the stock item is found, return it
+        // If the stock item is found, return 
         if (foundStockItem) {
             res.status(200).json({
                 success: true,
@@ -119,14 +110,9 @@ exports.updateStockItem = asyncHandler(async (req, res) => {
 
           // Extract data from the request body
           const {
-            itemId,
             itemName,
-            categoryId,
+            itemCategory, 
             cost,
-            realCost,
-            minQty,
-            quantity,
-            status,
             description
         } = req.body;
 
@@ -136,14 +122,9 @@ exports.updateStockItem = asyncHandler(async (req, res) => {
 
         if (existingStockItem){
             await stockItem.update({
-                itemId,
                 itemName,
-                categoryId,
+                itemCategory, 
                 cost,
-                realCost,
-                minQty,
-                quantity,
-                status,
                 description
 
             },{
@@ -167,7 +148,7 @@ exports.updateStockItem = asyncHandler(async (req, res) => {
 
         }
      } catch (error) {
-        console.log('Error updating category',error);
+        console.log('Error updating itemCategory',error);
         res.status(500).json({
             success: false,
             message:'Failed to update stock Item'
@@ -215,3 +196,4 @@ exports.deleteStockItem = asyncHandler(async (req, res) => {
 
 
 
+      

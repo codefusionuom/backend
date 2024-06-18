@@ -1,37 +1,36 @@
 module.exports = (sequelize, Sequelize) => {
     const grn = sequelize.define("grn", {
-        itemId: {
-          type: Sequelize.STRING,
-          unique: 'uniqueTag3',
-        },
+
         itemName: {
             type: Sequelize.STRING
           },
-        categoryId: {
+        category: {
             type: Sequelize.STRING,
-            
-          },
-       cost: {
+        },
+        supplierName: {
+          type: Sequelize.STRING,
+      },
+       amount: {
+          type: Sequelize.FLOAT, 
+        },
+        subtotal: {
+          type: Sequelize.FLOAT, 
+        },
+        discount: {   
           type: Sequelize.FLOAT,
         },
-        realCost: {
-            type: Sequelize.FLOAT,
-          },
-        minQty: {
-            type: Sequelize.INTEGER,
-          },
+        date: {
+            type: Sequelize.DATE,
+          },  
         quantity: {
             type: Sequelize.INTEGER,
           },
-        status: {
-            type: Sequelize.BOOLEAN,
-          },
-          
-        description: {
-          type: Sequelize.STRING,
-        },
        
-      });
+        description: {
+          type: Sequelize.STRING ,
+        },
+        
+      }); 
 
     return grn;
-  };
+  };        

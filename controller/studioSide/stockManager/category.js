@@ -1,17 +1,17 @@
 const asyncHandler = require("express-async-handler")
 const db = require("../../../config/db.config");
-const category = db.category;
+const Categories = db.categories;
 
 
 exports.createCategory = asyncHandler(async (req, res) => {
    
     try {
         // Extract category data from request body
-        const { categoryId, categoryName, description } = req.body;
+        const { categoryName, description } = req.body;
     
         // Create a new category entry in the database
-        const newCategory = await category.create({
-          categoryId,
+        const newCategory = await Categories.create({
+         
           categoryName,
           description,
         });
@@ -38,7 +38,7 @@ exports.getCategory = asyncHandler(async (req, res) => {
       const { categoryId } = req.params;
       
       // Find the category by categoryId
-      const foundCategory = await category.findOne({ where: { categoryId } });
+      const foundCategory = await Categories.findOne({ where: { categoryId } });
 
       // If category is found, return it
       if (foundCategory) {
@@ -65,7 +65,7 @@ exports.getCategory = asyncHandler(async (req, res) => {
 exports.getCategoryList = asyncHandler(async (req, res) => {
   try {
       // Retrieve the list of categories from the database
-      const categories = await category.findAll();
+      const categories = await Categories.findAll();
 
       // If categories are found, return them
       if (categories) {
@@ -97,15 +97,15 @@ exports.updateCategory = asyncHandler(async (req, res) => {
       const { id } = req.params;
 
       // Extract updated category data from the request body
-      const { categoryId, categoryName, description } = req.body;
+      const { categoryName, description } = req.body;
 
       // Find the category by id
-      let existingCategory = await category.findOne({ where: { id } });
+      let existingCategory = await Categories.findOne({ where: { id } });
 
       // If the category is found, update its attributes
       if (existingCategory) {
           await category.update({
-              categoryId,
+             
               categoryName,
               description,
           }, {
@@ -113,7 +113,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
           });
 
           // Fetch the updated category from the database
-          existingCategory = await category.findOne({ where: { id } });
+          existingCategory = await Categories.findOne({ where: { id } });
 
           res.status(200).json({
               success: true,
@@ -134,7 +134,7 @@ exports.updateCategory = asyncHandler(async (req, res) => {
           message: 'Failed to update category',
       });
   }
-});
+}); 
 
 
 
@@ -144,7 +144,7 @@ exports.deleteCategory = asyncHandler(async (req, res) => {
       const { id } = req.params;
 
       // Find the category by id
-      const existingCategory = await category.findOne({ where: { id } });
+      const existingCategory = await Categories.findOne({ where: { id } });
 
       // If the category exists, delete it
       if (existingCategory) {
@@ -177,7 +177,7 @@ exports.searchCategory = asyncHandler(async (req, res) => {
       const { searchQuery } = req.query;
 
       // Perform the search operation in the database
-      const categories = await category.findAll({
+      const categories = await Categories.findAll({
           where: {
               // Define the search criteria based on your database schema
               [Sequelize.Op.or]: [
@@ -186,21 +186,198 @@ exports.searchCategory = asyncHandler(async (req, res) => {
                   // Add more search criteria if necessary
               ],
           },
-      });
+      }); 
 
       // Respond with the list of categories matching the search criteria
       res.status(200).json({
-          success: true,
+          success: true,    
           message: 'Categories found',
           categories,
       });
-  } catch (error) {
+  } catch (error) { 
       console.error('Error searching categories:', error);
       res.status(500).json({
           success: false,
           message: 'Failed to search categories',
       });
   }
+  
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 });
 
 
