@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const Attendance = db.attendance;
-const Employee = db.employee;
+const Employee = db.employees;
 
 
 exports.createAttendance = asyncHandler(async (req, res) => {

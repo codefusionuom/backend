@@ -10,11 +10,17 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         primaryKey: true,
       },
+      // checkIn: {
+      //   type: Sequelize.INTEGER
+      // },
+      // checkOut: {
+      //   type: Sequelize.INTEGER
+      // },
       checkIn: {
-        type: Sequelize.INTEGER
+        type: Sequelize.TIME
       },
       checkOut: {
-        type: Sequelize.INTEGER
+        type: Sequelize.TIME
       },
       dayType: {
         type: Sequelize.STRING
