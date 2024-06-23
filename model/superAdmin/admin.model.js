@@ -20,6 +20,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false, // Password is required
     },
+    username: {
+      type: Sequelize.STRING,
+      allowNull: false, // username is required
+    },
   });
   return Admin;
 };

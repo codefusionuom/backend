@@ -2,7 +2,6 @@ const asyncHandler = require('express-async-handler');
 const db = require('../../../config/db.config');
 const bcrypt = require('bcryptjs'); //bcrypt: This is a library for hashing passwords.
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const config = require('config');
 const Admin = db.admin;
 require('dotenv').config();
@@ -10,9 +9,7 @@ require('dotenv').config();
 exports.createAdmin = asyncHandler(async (req, res) => {
   const { employeeName, employeeId, address, telephone, privileges, password } =
     req.body; //destructuring
-
   if (employeeId) {
-    console.log('old admin');
     const oldAdmin = await Admin.findOne({
       where: { employeeId: employeeId },
     });
@@ -34,6 +31,7 @@ exports.createAdmin = asyncHandler(async (req, res) => {
       telephone,
       privileges,
       password,
+      username : employeeId
     };
 
     const data = await Admin.create(admin); //create new addmin record
@@ -62,10 +60,7 @@ exports.createAdmin = asyncHandler(async (req, res) => {
       { expiresIn: '5 days' }
     );
 
-    res
-      .cookie('cookie', token, { httpOnly: true }) //means the cookie is only accessible by the web server and not by JavaScript running in the browser. This helps prevent XSS (Cross-Site Scripting) attacks.
-      .status(201)
-      .json({ message: 'Admin registered', token });
+    res.status(201).json({ message: 'Admin registered', token });
   } catch (error) {
     res.status(400);
     throw new Error(
