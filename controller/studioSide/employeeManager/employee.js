@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const { Op, findOrCreate } = require("sequelize");
 // const employeeModel = require("../../../model/employeeManager/employee.model");
-const Employee = db.employee;
+const Employee = db.employees;
 
 
 
@@ -34,7 +34,6 @@ exports.createEmployee = asyncHandler(async (req, res) => {
 
 
 exports.getEmployees = asyncHandler(async (req, res) => {
-    console.log("came by------------------------------------------------------------------")
     // const page = req.params.page;
     // let limit = 4;
     // let offset = limit * (page - 1)
@@ -61,7 +60,7 @@ exports.getEmployees = asyncHandler(async (req, res) => {
 
 
 
-exports.getEmployeeByid = asyncHandler(async (req, res) => {
+exports.getEmployeeByid = asyncHandler(async (req, res) => { 
     const { id } = req.params; // Assuming you're passing id as a route parameter
     const employee = await Employee.findByPk(id);
     if (employee === null) {

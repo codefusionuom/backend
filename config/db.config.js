@@ -37,7 +37,7 @@ const events = require("../model/eventManager/event.model")(sequelize, Sequelize
 const tasks = require("../model/eventManager/task.model")(sequelize, Sequelize)
 const assignedTasks = require("../model/eventManager/assignedTasks.model")(sequelize , Sequelize)
 
-const employee = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
+const employees = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
 const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
 const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
 
@@ -64,10 +64,10 @@ tasks.belongsTo(events);
 // tasks.belongsToMany(employee, { through: assignedTasks });
 
 assignedTasks.belongsTo(tasks, { foreignKey: 'taskId' });
-assignedTasks.belongsTo(employee, { foreignKey: 'emplyId' });
+assignedTasks.belongsTo(employees, { foreignKey: 'emplyId' });
 
 tasks.hasMany(assignedTasks, { foreignKey: 'taskId' });
-employee.hasMany(assignedTasks, { foreignKey: 'emplyId' });
+employees.hasMany(assignedTasks, { foreignKey: 'emplyId' });
 
 events.hasMany(customerPayments);
 customerPayments.belongsTo(events);
@@ -85,8 +85,8 @@ db.assignedTasks = assignedTasks
 
 
 /// 1:M
-employee.hasMany(attendance, { foreignKey: 'id' });
-attendance.belongsTo(employee, { foreignKey: 'id' });
+employees.hasMany(attendance, { foreignKey: 'id' });
+attendance.belongsTo(employees, { foreignKey: 'id' });
 
 
 ///1:1
@@ -96,7 +96,7 @@ attendance.belongsTo(employee, { foreignKey: 'id' });
 
 
 
-db.employee = employee
+db.employees = employees
 db.employeePaymentDetails = employeePaymentDetails
 db.attendance = attendance
 
