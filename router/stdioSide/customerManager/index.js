@@ -18,16 +18,16 @@ router.get("/customerEvents/:mobilePhone",getSearchCustomerEvents);
 
 
 //payments
-router.get("/payments/:page", getCustomerPayment); // getcustomers
+// router.get("/payments/:page", getCustomerPayment); // getcustomers
 router.post("/payment",createPayment);
-router.get("/payment/",getSearchAllPayment );// wait for date format ,time range
-router.get("/payment/:id", getCustomerPaymentDetails);
+// router.get("/payment/",getSearchAllPayment );// wait for date format ,time range
+// router.get("/payment/:id", getCustomerPaymentDetails);
 
 //customerRequests
-// router.get("/customerRequest", );// socket.io
+router.get("/customerRequest", );// socket.io
 // router.put("/customerRequest", );
 router.post("/customerRequest", getAllCustomerRequests);
-// router.get("/customerRequest/?search", );
+router.get("/customerRequest/?search", );
 // router.post("/customerRequest/confirm", );
 router.post("/eventRequest", createEventRequest);
 router.get("/eventRequest", getAllEventRequests);

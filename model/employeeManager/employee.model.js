@@ -1,18 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-  const employee = sequelize.define("employee", {
-    // empId: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    //   // Define a setter to ensure duplicate_id always mirrors id
-    //   set(value) {
-    //     this.setDataValue('empId', this.id);
-    //   }
-    // },
-    // empId: {
-    //   type: Sequelize.INTEGER,
-    //   unique: true,
-    //   allowNull: true,
-    // },
+
+  const employees = sequelize.define("employees", {
     empName: {
       type: Sequelize.STRING
     },
@@ -34,5 +22,5 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
     }
   });
-  return employee;
+  return employees;
 };

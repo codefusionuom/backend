@@ -42,7 +42,12 @@ const serviceInputFieldValues=require("../model/customer/serviceInputFieldValue.
 
 
 const events = require("../model/eventManager/event.model")(sequelize, Sequelize)
-const task = require("../model/eventManager/task.model")(sequelize, Sequelize)
+const tasks = require("../model/eventManager/task.model")(sequelize, Sequelize)
+const assignedTasks = require("../model/eventManager/assignedTasks.model")(sequelize , Sequelize)
+
+const employees = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
+const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
+const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
 
 // customers.hasMany(customerPayments);
 // customerPayments.belongsTo(customers);
@@ -56,6 +61,27 @@ serviceInputFieldValues.belongsTo(serviceInputFields)
 
 customers.hasMany(events);
 events.belongsTo(customers);
+
+events.hasMany(tasks);
+tasks.belongsTo(events);
+
+// assignedTasks.belongsTo(tasks);
+// assignedTasks.belongsTo(employees);
+
+// tasks.hasMany(assignedTasks);
+// employees.hasMany(assignedTasks)
+
+
+
+//sequlize doc-yasith
+// employees.belongsToMany(tasks, { through: assignedTasks });
+// tasks.belongsToMany(employees, { through: assignedTasks });
+
+assignedTasks.belongsTo(tasks, { foreignKey: 'taskId' });
+assignedTasks.belongsTo(employees, { foreignKey: 'emplyId' });
+
+tasks.hasMany(assignedTasks, { foreignKey: 'taskId' });
+employees.hasMany(assignedTasks, { foreignKey: 'emplyId' });
 
 events.hasMany(customerPayments);
 customerPayments.belongsTo(events);
@@ -108,33 +134,27 @@ db.serviceInputFields=serviceInputFields
 db.serviceInputFieldValues=serviceInputFieldValues
 
 db.events = events
-db.task = task
+db.tasks = tasks
+db.assignedTasks = assignedTasks
 
-
-
-/////// EmployeeManager
-
-const employee = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
-const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
-const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
 const paymentAllowanceDeduction = require("../model/employeeManager/paymentAllowanceDeduction.model")(sequelize,Sequelize)
 const advance = require("../model/employeeManager/advance.model")(sequelize,Sequelize)
 
 /// 1:M
-employee.hasMany(attendance, { foreignKey: 'id' });
-attendance.belongsTo(employee, { foreignKey: 'id' });
+employees.hasMany(attendance, { foreignKey: 'id' });
+attendance.belongsTo(employees, { foreignKey: 'id' });
 
-employee.hasMany(advance, {foreignKey: 'empId'});
-advance.belongsTo(employee, {foreignKey: 'id'});
+employees.hasMany(advance, {foreignKey: 'empId'});
+advance.belongsTo(employees, {foreignKey: 'id'});
 
 ///1:1
-// employeePaymentDetails.belongsTo(employee, { foreignKey: 'id' });
-// employee.hasOne(employeePaymentDetails, { foreignKey: 'id' });
+// employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
+// employees.hasOne(employeesPaymentDetails, { foreignKey: 'id' });
 
 
 
 db.paymentAllowanceDeduction = paymentAllowanceDeduction
-db.employees = employee
+db.employees = employees
 db.employeePaymentDetails = employeePaymentDetails
 db.attendance = attendance
 db.advance = advance
