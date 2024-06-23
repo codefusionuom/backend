@@ -8,17 +8,19 @@ module.exports = (sequelize, Sequelize) => {
     },
     email: {
       type: Sequelize.STRING,
-      unique: 'uniqueTag',
+      unique: true,
     },
     mobilePhone: {
       type: Sequelize.STRING,
-      unique: 'uniqueTag',
+      unique: true,
+      allowNull: false,
     },
     address: {
       type: Sequelize.STRING
     },
     status: {
-      type: Sequelize.BOOLEAN
+      type: Sequelize.INTEGER,
+      defaultValue: 0 
     }
   });
     return customers
