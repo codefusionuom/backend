@@ -1,21 +1,18 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 // const database=require("./config/mssql.js")
 const socketIo = require('socket.io');
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+app.use(bodyParser.json());
+// app.use(cookieParser());
 
-// async function runScript(){
-//     await database.connection()
-//   }
-// runScript()
-
-
-const db = require("./config/db.config.js");
+const db = require('./config/db.config.js');
 db.sequelize.sync();
 
 
@@ -23,16 +20,17 @@ const { createCustomerRequest } = require('./controller/studioSide/customerManag
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
-
+const superAdminRouter = require('./router/stdioSide/superAdmin/index.js');
 
 const { notFound, errorHandler } = require('./middleware/errorHandler.js');
 
 app.use("/customerManager",customerManagerRouter)
 app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
+app.use('/superAdmin', superAdminRouter);
 
 
-app.get('/test', (req, res) => res.send('Hello I am a dummy test router!'))
+// const { notFound, errorHandler } = require('./middleware/errorHandler.js');
 
 
 
