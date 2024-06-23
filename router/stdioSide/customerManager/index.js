@@ -4,14 +4,15 @@ const{getCustomers, createCustomers, deleteCustomer,getSearchCustomerEvents,upda
 const {  } = require('./tutorial');
 const { createPayment,getCustomerPayment,getCustomerPaymentDetails ,getSearchAllPayment} = require('../../../controller/studioSide/customerManager/payment');
 const { getAllCustomerRequests } = require('../../../controller/studioSide/customerManager/customerRequest');
-const { getCustomerServices, createCustomerServices,getCustomerService,updateCustomerService,deleteCustomerService } = require('../../../controller/studioSide/customerManager/customerService');
+const { getServices, getService, createService, updateService, deleteService } = require('../../../controller/studioSide/customerManager/customerService');
+const { createEventRequest, getAllEventRequests } = require('../../../controller/studioSide/customerManager/eventRequest');
 
 
 // customer
 router.put("/customer/:id",updateCustomer );
 router.post("/customer", createCustomers);
 router.delete("/customer/:id", deleteCustomer);
-router.get("/customer",getSearchCustomer );
+router.get("/customer", getCustomers);
 router.get("/customerEvents/:mobilePhone",getSearchCustomerEvents);
 
 
@@ -28,13 +29,14 @@ router.get("/payment/:id", getCustomerPaymentDetails);
 router.post("/customerRequest", getAllCustomerRequests);
 // router.get("/customerRequest/?search", );
 // router.post("/customerRequest/confirm", );
-
+router.post("/eventRequest", createEventRequest);
+router.get("/eventRequest", getAllEventRequests);
 //customerServices
-router.get("/customerService",getCustomerServices );
-router.get("/customerService/:id",getCustomerService );
-router.post("/customerService", createCustomerServices);
-router.put("/customerService/:id",updateCustomerService );
-router.delete("/customerService/:id", deleteCustomerService);
+router.get("/Service",getServices );
+router.get("/Service/:id",getService );
+router.post("/Service", createService);
+router.put("/Service/:id",updateService );
+router.delete("/Service/:id", deleteService)
 //router.get("/customerEvents/:mobilePhone",getSearchCustomerEvents);
 
 

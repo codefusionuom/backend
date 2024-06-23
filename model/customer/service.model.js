@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize, Sequelize) => {
-    const customerServices = sequelize.define("customerServices", {
+    const services = sequelize.define("services", {
       serviceName: {
         type: Sequelize.STRING,
         unique: true
@@ -9,23 +9,18 @@ module.exports = (sequelize, Sequelize) => {
       description: {
         type: Sequelize.STRING
       },
-      inputFields: {
-        type: Sequelize.STRING,
-      },
-      selectFields: {
-        type: Sequelize.STRING,
-      },
       parentService: {
         type: Sequelize.INTEGER,
         references: {
-            model: "customerServices",
-            key: 'id', 
-          } 
+          model: "services",
+          key: 'id',
+        },
+        onDelete: 'CASCADE' // Add this line to enable cascade delete
       },
       price: {
         type: Sequelize.REAL,
       }
       
     });
-      return customerServices
+      return services
     };

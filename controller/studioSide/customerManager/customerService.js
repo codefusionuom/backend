@@ -1,126 +1,261 @@
-const asyncHandler = require("express-async-handler")
+const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
-const { Op, Sequelize } = require("sequelize");
-const customerServices = db.customerServices;
+const { Sequelize } = require("sequelize");
+const Services = db.services;
+const ServiceInputFields = db.serviceInputFields;
+const ServiceInputFieldValues = db.serviceInputFieldValues;
 
+exports.createService = asyncHandler(async (req, res) => {
+  //const t = await db.sequelize.transaction();
+  console.log(req.body);
+  const {
+    serviceName,
+    description,
+    inputFields,
+    selectFields,
+    price,
+    parentService,
+  } = req.body;
 
-exports.createCustomerServices = asyncHandler(async (req, res) => {
+  try {
+    const service = {
+      serviceName,
+      description,
+      price,
+      parentService,
+    };
+    console.log("service : ", service);
+    Services.create(service).then((service) => {
+      console.log("database service", service);
 
-    console.log(req.body);
-const {serviceName,description,inputFields,selectFields,selectOptions,price,parentService}=req.body
-
-    try {
-        const customerService = {
-            serviceName, description, price,parentService,
-            inputFields: JSON.stringify(inputFields),
-            selectFields: JSON.stringify(selectFields),
+      // for inputfeilds
+      inputFields.forEach((element) => {
+        const serviceinputfield = {
+          fieldName: element,
+          serviceId: service.id,
+          type: "input",
         };
-         console.log(customerService);
-         const data = await customerServices.create(customerService)
-         res.status(200).json(data);
+        console.log("service input field : ", serviceinputfield);
+        ServiceInputFields.create(serviceinputfield).then(
+          (serviceinputfield) => {
+            console.log("database service input field", serviceinputfield);
+          }
+        );
+      });
 
-    } catch (error) {
-        res.status(400);
-        throw new Error(error.message || "Some error occurred while creating the Customer");
-    }
-})
-
-
-exports.getCustomerServices = asyncHandler(async (req, res) => {
-   
-    try {
-        let customerServicelist=[]
-        let customerServicelistfinal=[]
-        const data = await customerServices.findAll({attributes: [ [Sequelize.literal('id'), 'value'], [Sequelize.literal('serviceName'), 'label'],'parentService']})
-        // console.log(data);
-        data.forEach(i => {
-            i.dataValues.children=[]
-            //console.log("i----------",i.dataValues);
-            data.forEach(j => {
-                if(i.dataValues.value == j.dataValues.parentService){
-                    // console.log(i.dataValues.serviceName,"parent of",j.dataValues.dataValues);
-                    i.dataValues.children.push(j.dataValues)
+      // for selectfields
+      selectFields.forEach((element) => {
+        const key = Object.keys(element)[0];
+        const objects = element[key];
+        console.log(element, key, objects);
+        const serviceinputfield = {
+          fieldName: key,
+          serviceId: service.id,
+          type: "select",
+        };
+        console.log("service input field : ", serviceinputfield);
+        ServiceInputFields.create(serviceinputfield).then(
+          (serviceinputfield) => {
+            console.log("database service input field", serviceinputfield);
+            objects.forEach((element) => {
+              const serviceinputfieldvalue = {
+                fieldValueName: element.name,
+                serviceInputFieldId: serviceinputfield.id,
+                price: element.value,
+              };
+              ServiceInputFieldValues.create(serviceinputfieldvalue).then(
+                (serviceinputfieldvalue) => {
+                  console.log(
+                    "serviceinputfieldvalue :",
+                    serviceinputfieldvalue
+                  );
                 }
-                
+              );
             });
-            
-            customerServicelist.push(i.dataValues)
-             //console.log("--------------------------------------------",i.dataValues);
-        });
+          }
+        );
+      });
+    });
+    // await t.commit();
+    res.status(200).json("ok");
+  } catch (error) {
+    // await t.rollback();
+    res.status(400);
+    throw new Error(
+      error.message || "Some error occurred while creating the Customer"
+    );
+  }
+});
 
-        customerServicelist.forEach(element => {
-           // console.log(element);
-            if(!element.parentService){
-                customerServicelistfinal.push(element)
-            }
-        });
-         //console.log(customerServicelist,"ff");
-        res.status(200).json(customerServicelistfinal)
+exports.getServices = asyncHandler(async (req, res) => {
+  try {
+    let customerServicelist = [];
+    let customerServicelistfinal = [];
+    const data = await Services.findAll({
+      attributes: [
+        [Sequelize.literal("id"), "value"],
+        [Sequelize.literal("serviceName"), "label"],
+        "parentService",
+      ],
+    });
+    // console.log(data);
+    data.forEach((i) => {
+      i.dataValues.children = [];
+      //console.log("i----------",i.dataValues);
+      data.forEach((j) => {
+        if (i.dataValues.value == j.dataValues.parentService) {
+          // console.log(i.dataValues.serviceName,"parent of",j.dataValues.dataValues);
+          i.dataValues.children.push(j.dataValues);
+        }
+      });
 
-         } catch (error) {
-        res.status(400);
-        throw new Error(error.message || "can't get Customer");
-    }
-})
+      customerServicelist.push(i.dataValues);
+      //console.log("--------------------------------------------",i.dataValues);
+    });
 
+    customerServicelist.forEach((element) => {
+      // console.log(element);
+      if (!element.parentService) {
+        customerServicelistfinal.push(element);
+      }
+    });
+    //console.log(customerServicelist,"ff");
+    res.status(200).json(customerServicelistfinal);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
 
-exports.getCustomerService = asyncHandler(async (req, res) => {
-    const serviceId = req.params.id
-    try {
-       
-        const data = await customerServices.findOne({where:{id:serviceId}})
-    
-        
-       console.log(data);
-       const{id,serviceName,description,inputFields,selectFields,parentService,price}=data
-        
-        res.status(200).json({id,serviceName,description,inputFields:JSON.parse(inputFields),selectFields:JSON.parse(selectFields),parentService,price})
+exports.getService = asyncHandler(async (req, res) => {
+  const serviceId = req.params.id;
+  try {
+    // const data = await Services.findOne({ where: { id: serviceId } });
+    const service = await Services.findOne({
+      where: { id: serviceId },
+      include: [
+        {
+          model: ServiceInputFields,
+          as: "serviceInputFields",
+          include: [
+            {
+              model: ServiceInputFieldValues,
+              as: "serviceInputFieldValues",
+            },
+          ],
+        },
+      ],
+    });
+    console.log(service);
+    // const {
+    //   id,
+    //   serviceName,
+    //   description,
+    //   inputFields,
+    //   selectFields,
+    //   parentService,
+    //   price,
+    // } = data;
+    res.status(200).json(service);
+    // res.status(200).json({
+    //   id,
+    //   serviceName,
+    //   description,
+    //   inputFields: JSON.parse(inputFields),
+    //   selectFields: JSON.parse(selectFields),
+    //   parentService,
+    //   price,
+    // });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
 
-         } catch (error) {
-        res.status(400);
-        throw new Error(error.message || "can't get Customer")
-    }
-})
-
-
-exports.updateCustomerService = asyncHandler(async (req, res) => {
-    const serviceId = req.params.id
+exports.updateService = asyncHandler(async (req, res) => {
+  try {
+    const serviceId = req.params.id;
     console.log(serviceId);
-    try{
-        const {serviceName,description,inputFields,selectFields,selectOptions,price,parentService}=req.body
-        const customerService = {
-            serviceName, description, price,parentService,
-            inputFields: JSON.stringify(inputFields),
-            selectFields: JSON.stringify(selectFields),
-        };
-         console.log(customerService);
-        const data = await customerServices.update(customerService,{where:{id:serviceId},returning: true,})
-    
+    const service = await Services.findOne({
+      where: { id: serviceId },
+      include: [
+        {
+          model: ServiceInputFields,
+          as: "serviceInputFields",
+          include: [
+            {
+              model: ServiceInputFieldValues,
+              as: "serviceInputFieldValues",
+            },
+          ],
+        },
+      ],
+    });
+    console.log("in service edit", service);
+    if (service) {
+      const {
+        serviceName,
+        description,
+        inputFields,
+        selectFields,
+        price,
+        parentService,
+      } = req.body;
+
+      const customerService = {
+        serviceName,
+        description,
+        price,
+        // parentService,
+      };
+      const data = await Services.update(customerService, {
+        where: { id: serviceId },
+        returning: true,
+      });
+     
+      const existingFields = service.serviceInputFields.map(field => field.fieldName);
+      const fieldsToAdd = inputFields.filter(field => !existingFields.includes(field));
+      const fieldsToRemove = service.serviceInputFields.filter(field => !inputFields.includes(field.fieldName));
+  
+      // Add new fields to the database
+      for (const field of fieldsToAdd) {
+        await ServiceInputFields.create({
+          fieldName: field,
+          serviceId: serviceId,
+          type: 'input' // or 'select' based on your logic
+        });
+      }
+  
+      // Remove old fields from the database
+      for (const field of fieldsToRemove) {
+        await ServiceInputFields.destroy({
+          where: { id: field.id }
+        });
+      }
         
-       console.log(data); 
-        res.status(200).json({serviceId})
-
-         }
-    catch (error) {
-        res.status(400);
-        throw new Error(error.message || "can't get Customer")
+      console.log(data,"edited service table");
     }
-})
 
+    res.status(200).json({ serviceId });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
 
-exports.deleteCustomerService = asyncHandler(async (req, res) => {
-    const serviceId = req.params.id
-    console.log(serviceId);
-    try {
-        const data = await customerServices.destroy({
-            where: { id: serviceId },
-            returning: true
-        })
-        res.status(200).json(data);
-        
-         } catch (error) {
-        res.status(400);
-        throw new Error(error.message || "can't get Customer")
-    }
-})
+exports.deleteService = asyncHandler(async (req, res) => {
+  const serviceId = req.params.id;
+  console.log(serviceId);
+  try {
+    const data = await Services.destroy({
+      where: { id: serviceId },
+      returning: true,
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
 
+// Adjust the path to your db.config file
