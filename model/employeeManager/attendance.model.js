@@ -6,15 +6,25 @@ module.exports = (sequelize, Sequelize) => {
         primaryKey: true,
         // autoIncrement: true,
       },
+      // date: {
+      //   type: Sequelize.DATE,
+      //   primaryKey: true,
+      // },
       date: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
         primaryKey: true,
       },
-      checkIn: {
+      checkInSeconds: {
         type: Sequelize.INTEGER
       },
-      checkOut: {
+      checkOutSeconds: {
         type: Sequelize.INTEGER
+      },
+      checkIn: {
+        type: Sequelize.TIME
+      },
+      checkOut: {
+        type: Sequelize.TIME
       },
       dayType: {
         type: Sequelize.STRING
