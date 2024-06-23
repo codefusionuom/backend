@@ -1,28 +1,23 @@
-module.exports = (sequelize, Sequelize) => {
-    const task = sequelize.define("task", {
-      // eventId: {
-      //   type: Sequelize.STRING,
-      //   // references:{
 
-      //   // },
-        
-      // },
+
+module.exports = (sequelize, Sequelize) => {
+    const tasks = sequelize.define("tasks", {
+      eventId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'events',
+          key: 'id',  
+       }
+      },
       taskName:{
         type:Sequelize.STRING,
       },
-      // taskId: {
-      //   type: Sequelize.STRING,
-      //   // unique: 'uniqueTag',
-      //   primaryKey: true,
-      //   autoIncrement: true
-      // },
-      // employeesAssigned: {
-      //   type: Sequelize.ARRAY(Sequelize.STRING),
-      //   allowNull: true,
-      // },
+      date : {
+        type : Sequelize.DATE
+      },
       serviceType: {
         type: Sequelize.ENUM,
-        values: ['editing' , 'photography']
+        values: ['editing' , 'photography' , 'one day services']
       },
       department: {
         type: Sequelize.ENUM,
@@ -30,11 +25,11 @@ module.exports = (sequelize, Sequelize) => {
       },
       status: {
         type: Sequelize.ENUM,
-        values: [' Active', 'Upcoming ','Desertion', 'Done']
+        values: ['Active', 'Upcoming ','Desertion', 'Done']
       },
       description: {
         type: Sequelize.STRING
       }
     });
-      return task
+      return tasks
     };

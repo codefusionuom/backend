@@ -79,105 +79,58 @@ exports.getCustomerPaymentDetails = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Customer");
-  }
-});
+}
+})
 
-exports.getSearchAllPayment = async (req, res) => {
-  console.log("get search payment");
-  const mobilePhone = req.query.search;
-  const page = parseFloat(req.query.page);
-  const limit = parseFloat(req.query.limit);
+exports.getSearchPayment=async(req,res)=>{
+    const query=req.query.search;
+    const page = req.query.page;
+    let limit=4;
+    let offset=limit*(page-1)
+   console.log(req.query,query,page)
+  // const date = moment(new Date("2024-02-02T09:16:22.103Z"), 'MM-DD-YYYY')
+   // const parsedDate = moment(req.query.date, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ').format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
+    // console.log(req.query.date,date)
+    try {
+        const data =await CustomerPayment.findAndCountAll({
+            attributes: ['id', 'amount','payment','createdAt','status'],
+            include: [
+              {
+                model: Customer,
+                attributes: ['id','firstname', 'mobilePhone','email'],
+                where: {
 
-  let offset = limit * (page - 1);
-  console.log(req.query, page);
+                    [Op.or]: [
+                        { mobilePhone: query },
+                        { email: query },
+                       
+                      ]
 
-  try {
-    let data;
-    if (!mobilePhone) {
-      data = await CustomerPayment.findAndCountAll({
-        attributes: [
-          "id",
-          "amount",
-          "payment",
-          "createdAt",
-          "status",
-          "customerName",
-          "customerMobilePhone",
-        ],
-        include: [
-          {
-            model: Events,
-            attributes: ["id", "serviceType"],
-          },
-        ],
-        order: [["createdAt", "DESC"]],
-        limit: limit,
-        offset: offset,
-      });
-    } else {
-      data = await CustomerPayment.findAndCountAll({
-        attributes: [
-          "id",
-          "amount",
-          "payment",
-          "createdAt",
-          "status",
-          "customerName",
-          "customerMobilePhone",
-        ],
-        where: { customerMobilePhone: mobilePhone },
-        include: [
-          {
-            model: Events,
-            attributes: ["id", "serviceType"],
-          },
-        ],
-        order: [["createdAt", "DESC"]],
-        limit: limit,
-        offset: offset,
-      });
+                    // [Op.and]:[{
+                    // [Op.or]: [
+                    //     { mobilePhone: query },
+                    //     { email: query },
+                       
+                    //   ]},{
+                    //   createdAt: date && {
+                    //     $gt: date.toDate(),
+                    //     $lt: date.add(1, 'days').toDate()
+                    //   }
+                    // }
+                    // ]
+                    
+                  
+                }
+              }
+            ],
+            limit: limit,
+            offset: offset,
+          })
+          console.log(data.createdAt)
+          res.status(200).json(data)  
+    } catch (error) {
+        res.status(400)
+    throw new Error(error.message || "can't find Customer") 
     }
 
-    console.log(data.createdAt);
-    res.status(200).json(data);
-  } catch (error) {
-    console.log(error);
-    res.status(400);
-    throw new Error(error.message || "can't find Customer");
-  }
-};
-
-// const data =await CustomerPayment.findAndCountAll({
-//     attributes: ['id', 'amount','payment','createdAt','status'],
-//     where:{customerMobilePhone: mobilePhone},
-//     include: [
-//       {
-//         model: Customer,
-//         attributes: ['id','firstname', 'mobilePhone','email'],
-//         where: {
-
-//             [Op.or]: [
-//                 { mobilePhone: query },
-//                 { email: query },
-
-//               ]
-
-//             [Op.and]:[{
-//             [Op.or]: [
-//                 { mobilePhone: query },
-//                 { email: query },
-
-//               ]},{
-//               createdAt: date && {
-//                 $gt: date.toDate(),
-//                 $lt: date.add(1, 'days').toDate()
-//               }
-//             }
-//             ]
-
-//         }
-//       }
-//     ],
-//     limit: limit,
-//     offset: offset,
-//   })
+}

@@ -25,7 +25,10 @@ module.exports = (sequelize, Sequelize) => {
             model: "customers", 
             key: 'id'
           } 
-      }
+      },
+      // eventDetails: {
+
+      // }
     });
       return events
     };

@@ -1,10 +1,12 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 // const Event = require("../../../model/eventManager/event.model");
-const Event = db.event;
+const Event = db.events;
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
+const Customer = db.customers;
+const Employee = db.employee;
 
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
@@ -29,14 +31,7 @@ const createEvent = asyncHandler(async (req, res) => {
       console.log("corrected date: ", correctedDate);
       console.log("eveent id: ", eventId);
       console.log("custormer : ", customerId);
-      
-      // const inputDate = new Date(date);
-      // const formattedDate = inputDate.toLocaleDateString('en-GB', {
-      //   day: '2-digit',
-      //   month: '2-digit',
-      //   year: 'numeric',
-      // });
-      // console.log(formattedDate);
+   
       console.log("{} event ID :" ,eventId);
       if(eventId){
       existingEvent = await Event.findOne({ where: { eventId: eventId } })
@@ -45,7 +40,7 @@ const createEvent = asyncHandler(async (req, res) => {
       // return res.status(400).json({ message: "Event already exists"  , existingEvent : existingEvent });
 
       // }).catch(function (error) {
-      //   console.log("Event B error: ", error);
+      //   console.log( "Event B error: ", error);
       // })
 
     // eventId = "gnsiphnsiphins";
@@ -99,13 +94,15 @@ try {
 
 const allEvents = asyncHandler(async(req, res) =>{
  try {
-   const events = await Event.findAll();
+   const events = await Event.findAll( { include: [Customer]});
    if(!events) res.status(400).json({ message: "Could not get events !"});
  res.status(200).json({events : events})
  } catch (error) {
   res.status(400).json({ message: error.message });
  }
 })
+
+
 
 const filterEventsBetween = asyncHandler(async(req, res) =>{
 
@@ -135,8 +132,9 @@ const filterEventsBetween = asyncHandler(async(req, res) =>{
 const getOnedayEvents = asyncHandler(async (req, res) => {
   await Event.findAll({
     where: {
-      serviceType: "one day services",
+      serviceType: "one day services"
     },
+    include: [Customer]
   })
     .then((result) => res.status(200).json({ oneDayEvents: result }))
     .catch((error) => res.status(404).json({ error: error }));
@@ -216,6 +214,8 @@ const getSelectedDayEvents =  asyncHandler(async(req, res) =>{
           [Op.between] : [todayBegin , endOfDay ]
         }
       }
+      ,
+      include: [Customer]
     }).then((result) => res.status(200).json({ todayEvents: result }))
     .catch((error) => res.status(404).json({ error: error }));
   } catch (error) {
@@ -224,6 +224,41 @@ const getSelectedDayEvents =  asyncHandler(async(req, res) =>{
 })
 
 
+const getCustomer= asyncHandler( async(req,res) => {
+  console.log("searching customer")
+  const {mobilePhone} =req.body;
+  console.log(mobilePhone);
+  try {
+    // { where: { eventId: eventId } }
+      const data = await Customer.findAll({
+        where: {
+          mobilePhone: { 
+            [Op.like]: `%${mobilePhone}%`
+          },
+        },  
+      });
+      console.log("data "+ data);
+      console.log( data);
+        res.status(200).json(data)  
+  } catch (error) {
+      res.status(400)
+  throw new Error(error.message || "can't find Customer") 
+  }
+
+}
+
+)
+
+const getEvent = asyncHandler(async(req, res) => {
+  const { eventId } = req.params;
+  console.log(eventId);
+  const data = await Event.findOne({ where: { eventId: eventId } ,include :[Customer]  })
+  // .then((data) => {res.status(200).json(data)}).catch((err) => {
+  //   res.status(500).json({ error: err})
+  // })
+  if(data) res.status(200).json(data)
+  if(!data) res.status(400).json({error: error})
+});
 
 function setToStartOfDay(date) {
   const newDate = new Date(date);
@@ -251,11 +286,48 @@ const generateId = ()=>{
 
 }
 
-const getEventByMobilePhone =(req,res)=>{
-
-}
 
 
+const getAllEmployees = asyncHandler(async(req, res) =>{
+  try {
+    const employees = await Employee.findAll( { include: [Employee]});
+    if(!employees) res.status(400).json({ message: "Could not get employees !"});
+  res.status(200).json({employees : employees})
+  } catch (error) {
+   res.status(400).json({ message: error.message });
+  }
+ })
+
+ const getEmployees = asyncHandler(async (req, res) => {
+  // const page = req.params.page;
+  // let limit = 4;
+  // let offset = limit * (page - 1)
+  try {
+      const { count, rows } = await Employee.findAndCountAll({
+          limit: 10,
+          // limit: limit,
+          // offset: offset,
+      });
+
+      const employees = rows;
+
+      if (!employees || employees.length === 0) {
+          res.status(200).json([]);
+      } else {
+          res.status(200).json(employees);
+          console.log(employees)
+      }
+  } catch (error) {
+      console.error("Error fetching employees:", error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+ const getAllEventTypes = asyncHandler(async(req, res) =>{
+  let eventTypes = [];
+
+ })
 
 module.exports = {
   createEvent,
@@ -265,5 +337,7 @@ module.exports = {
   getOnedayEvents,
   getTodayEvents,
   getSelectedDayEvents,
-  getEventByMobilePhone
+  getCustomer,
+  getEvent,
+  getAllEmployees
 };

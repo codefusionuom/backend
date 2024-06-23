@@ -50,7 +50,7 @@ exports.getEmployees = asyncHandler(async (req, res) => {
             res.status(200).json([]);
         } else {
             res.status(200).json(employees);
-            console.log(employees)
+            // console.log(employees)
         }
     } catch (error) {
         console.error("Error fetching employees:", error);
@@ -60,7 +60,7 @@ exports.getEmployees = asyncHandler(async (req, res) => {
 
 
 
-exports.getEmployeeByid = asyncHandler(async (req, res) => {
+exports.getEmployeeByid = asyncHandler(async (req, res) => { 
     const { id } = req.params; // Assuming you're passing id as a route parameter
     const employee = await Employee.findByPk(id);
     if (employee === null) {
