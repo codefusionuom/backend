@@ -117,10 +117,15 @@ db.task = task
 const employee = require("../model/employeeManager/employee.model")(sequelize,Sequelize)
 const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
 const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
+const paymentAllowanceDeduction = require("../model/employeeManager/paymentAllowanceDeduction.model")(sequelize,Sequelize)
+const advance = require("../model/employeeManager/advance.model")(sequelize,Sequelize)
 
 /// 1:M
 employee.hasMany(attendance, { foreignKey: 'id' });
 attendance.belongsTo(employee, { foreignKey: 'id' });
+
+employee.hasMany(advance, {foreignKey: 'empId'});
+advance.belongsTo(employee, {foreignKey: 'id'});
 
 ///1:1
 // employeePaymentDetails.belongsTo(employee, { foreignKey: 'id' });
@@ -128,10 +133,11 @@ attendance.belongsTo(employee, { foreignKey: 'id' });
 
 
 
-
-db.employee = employee
+db.paymentAllowanceDeduction = paymentAllowanceDeduction
+db.employees = employee
 db.employeePaymentDetails = employeePaymentDetails
 db.attendance = attendance
+db.advance = advance
 
 
 

@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const { Op, findOrCreate } = require("sequelize");
 // const employeeModel = require("../../../model/employeeManager/employee.model");
-const Employee = db.employee;
+const Employee = db.employees;
 
 
 
