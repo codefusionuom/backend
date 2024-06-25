@@ -39,10 +39,10 @@ exports.login = asyncHandler(async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   // Check if admin exists
-  const admin = await Admin.findOne({ where: { username } });
+  const admin = await Admin.findOne({ where: { email } });
 
   if (!admin) {
     return res.status(400).json({ message: 'Invalid credentials' });
@@ -59,6 +59,7 @@ exports.login = asyncHandler(async (req, res) => {
   const payload = {
     admin: {
       id: admin.id,
+      privileges: admin.privileges,
     },
   };
 

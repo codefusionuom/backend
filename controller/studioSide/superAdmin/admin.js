@@ -7,7 +7,7 @@ const Admin = db.admin;
 require('dotenv').config();
 
 exports.createAdmin = asyncHandler(async (req, res) => {
-  const { employeeName, employeeId, address, telephone, privileges, password } =
+  const { employeeName, employeeId, address, telephone, privileges, password,email } =
     req.body; //destructuring
   if (employeeId) {
     const oldAdmin = await Admin.findOne({
@@ -31,7 +31,7 @@ exports.createAdmin = asyncHandler(async (req, res) => {
       telephone,
       privileges,
       password,
-      username : employeeId
+      email
     };
 
     const data = await Admin.create(admin); //create new addmin record
@@ -45,22 +45,7 @@ exports.createAdmin = asyncHandler(async (req, res) => {
       { where: { id: data.id } }
     );
 
-    //jwt authentication
-    const payload = {
-      //payload is an object that contains the data want to include in the JWT.
-      admin: {
-        id: data.id,
-      },
-    };
-
-    const token = jwt.sign(
-      //This method from the jsonwebtoken library creates a new JWT
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: '5 days' }
-    );
-
-    res.status(201).json({ message: 'Admin registered', token });
+    res.status(201).json({ message: 'Admin registered' });
   } catch (error) {
     res.status(400);
     throw new Error(
@@ -105,18 +90,7 @@ exports.updateAdmin = asyncHandler(async (req, res) => {
 exports.getAdmin = asyncHandler(async (req, res) => {
   try {
     const data = await Admin.findAndCountAll({});
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message || "can't get Admins");
-  }
-});
-
-exports.getAdminByid = asyncHandler(async (req, res) => {
-  const { id } = req.params; // Assuming you're passing id as a route parameter
-  try {
-    const data = await Admin.findByPk(id);
-    res.status(200).json(data);
+    res.status(200).json(data.rows);
   } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Admins");
