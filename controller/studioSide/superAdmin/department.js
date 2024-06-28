@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
-const Department = db.department;
+const Departments = db.departments;
 
 exports.createDepartment = asyncHandler(async (req, res) => {
   const {
@@ -14,7 +14,7 @@ exports.createDepartment = asyncHandler(async (req, res) => {
   } = req.body;
 
   if (departmentId) {
-    const oldDepartment = await Department.findOne({
+    const oldDepartment = await Departments.findOne({
       where: { departmentId: departmentId },
     });
     if (oldDepartment) {
@@ -38,7 +38,7 @@ exports.createDepartment = asyncHandler(async (req, res) => {
       departmentTask,
     };
     console.log(department);
-    const data = await Department.create(department);
+    const data = await Departments.create(department);
     res.status(200).json(data);
   } catch (error) {
     res.status(400);
@@ -55,7 +55,7 @@ exports.deleteDepartment = asyncHandler(async (req, res) => {
     return;
   }
   try {
-    const data = await Department.destroy({
+    const data = await Departments.destroy({
       where: { departmentId: id },
       where: { id: id },
       returning: true,
@@ -71,7 +71,7 @@ exports.updateDepartment = asyncHandler(async (req, res) => {
   const id = req.params.id;
   console.log(id, req.body);
   try {
-    const data = await Department.update(req.body, {
+    const data = await Departments.update(req.body, {
       where: { id: id },
       returning: true,
     });
@@ -83,17 +83,8 @@ exports.updateDepartment = asyncHandler(async (req, res) => {
 });
 
 exports.getDepartment = asyncHandler(async (req, res) => {
-  const page = req.params.page;
-  // let limit = 4; // Adjust limit as needed
-  // let offset = limit * (page - 1);
   try {
-    const data = await Department
-      .findAndCountAll
-      // {
-      // limit: limit,
-      // offset: offset,
-      // }
-      ();
+    const data = await Departments.findAndCountAll();
     res.status(200).json(data);
   } catch (error) {
     res.status(400);
@@ -104,7 +95,7 @@ exports.getDepartment = asyncHandler(async (req, res) => {
 exports.getDepartmentByid = asyncHandler(async (req, res) => {
   const { id } = req.params; 
   try {
-    const data = await Department.findByPk(id);
+    const data = await Departments.findByPk(id);
     res.status(200).json(data);
   } catch (error) {
     res.status(400);

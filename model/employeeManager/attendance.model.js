@@ -26,12 +26,12 @@ module.exports = (sequelize, Sequelize) => {
       checkOut: {
         type: Sequelize.TIME
       },
-      dayType: {
-        type: Sequelize.STRING
-      },
-      leaveType: {
-        type: Sequelize.STRING
-      }
+      // dayType: {
+      //   type: Sequelize.STRING
+      // },
+      // leaveType: {
+      //   type: Sequelize.STRING
+      // }
     });
     return attendance;
   };

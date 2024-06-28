@@ -1,7 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
-const { Op, findOrCreate } = require("sequelize");
+const { Op, findOrCreate, where } = require("sequelize");
 const paymentAllowanceDeduction = db.paymentAllowanceDeduction;
+const empallowance = db.empallowance;
 
 exports.createAllowanceDeduction = asyncHandler(async (req, res) => {
     const { allowanceorDeduction, allowanceDeductionName } = req.body
@@ -89,6 +90,43 @@ exports.deleteAllowance = asyncHandler(async (req, res) => {
 })
 
 
+
+exports.getAllowanceByType = asyncHandler(async (req, res) => {
+    const type = req.query.type;
+    try {
+        const { count, rows } = await paymentAllowanceDeduction.findAndCountAll({
+              where:{allowanceDeduction: type}
+        });
+
+        const allowance = rows;
+
+        if (!allowance || allowance.length === 0) {
+            res.status(200).json([]);
+        } else {
+            res.status(200).json(allowance);
+            console.log(allowance)
+        }
+    } catch (error) {
+        console.error("Error fetching Allowance:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
+exports.createEmpAllowance = asyncHandler(async (req, res) => {
+    const { id, empId, amount } = req.body
+    const record = await empallowance.create({
+        allowanceid: id,
+        empId: empId,
+        Amount: amount,
+    });
+    if (record) {
+        res.status(201).json({ message: "Record Created", record });
+    }else {
+        console.log("Employee Exists");
+        res.status(400).send({ message: "Record already exist" });
+    }
+})
 
 
 

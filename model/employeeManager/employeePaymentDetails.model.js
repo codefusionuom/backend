@@ -17,6 +17,9 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         unique: true,
       },
+      empSalary: {
+      type: Sequelize.INTEGER
+    },
       overtimeRate: {
         type: Sequelize.INTEGER
       },

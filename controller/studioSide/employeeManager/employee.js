@@ -7,17 +7,17 @@ const Employee = db.employees;
 
 
 exports.createEmployee = asyncHandler(async (req, res) => {
-    const { empId, empName, empType, empSalary, empAdd, empDepartment, empNumber } = req.body
+    const {empName, empType, empAdd, empDepartment, empNumber, empEmail } = req.body
+    console.log(empNumber);
     const [emp, created] = await Employee.findOrCreate({
         where: { empNumber: empNumber },
         defaults: {
             empName : empName,
             empType: empType,
-            empSalary: empSalary,
             empAdd: empAdd,
             empDepartment: empDepartment,
             empNumber: empNumber,
-            empId: empId,
+            empEmail: empEmail,
         }
     });
     
@@ -33,30 +33,30 @@ exports.createEmployee = asyncHandler(async (req, res) => {
 })
 
 
-exports.getEmployees = asyncHandler(async (req, res) => {
-    // const page = req.params.page;
-    // let limit = 4;
-    // let offset = limit * (page - 1)
-    try {
-        const { count, rows } = await Employee.findAndCountAll({
-            limit: 10,
-            // limit: limit,
-            // offset: offset,
-        });
+// exports.getEmployees = asyncHandler(async (req, res) => {
+//     const page = req.params.page;
+//     let limit = 4;
+//     let offset = limit * (page - 1)
+//     try {
+//         const { count, rows } = await Employee.findAndCountAll({
+//             limit: 10,
+//             limit: limit,
+//             offset: offset,
+//         });
 
-        const employees = rows;
+//         const employees = rows;
 
-        if (!employees || employees.length === 0) {
-            res.status(200).json([]);
-        } else {
-            res.status(200).json(employees);
-            // console.log(employees)
-        }
-    } catch (error) {
-        console.error("Error fetching employees:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
+//         if (!employees || employees.length === 0) {
+//             res.status(200).json([]);
+//         } else {
+//             res.status(200).json(employees);
+//             console.log(employees)
+//         }
+//     } catch (error) {
+//         console.error("Error fetching employees:", error);
+//         res.status(500).json({ error: "Internal server error" });
+//     }
+// });
 
 
 
@@ -113,6 +113,83 @@ exports.deleteEmplloyee = asyncHandler(async (req, res) => {
 
 })
 
+
+exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
+    const page = req.query.page;
+    const empName = req.query.empName;
+    const limit = 8;
+    console.log("get Employee",page,empName,limit);
+    let offset = limit * (page - 1)
+    try {
+        if(empName){
+            const data = await Employee.findAndCountAll({
+                where: {
+                    empName: { 
+                      [Op.like]: `%${empName}%`
+                    }
+                  },
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Employee.findAndCountAll({
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
+        }
+        
+       
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
+    }
+})
+
+
+exports.getEmployeeSearch = asyncHandler(async (req, res) => {
+    // const page = req.query.page;
+    const empName = req.query.empName;
+    // const limit = 8;
+    console.log("get Employee",empName);
+    // let offset = limit * (page - 1)
+    try {
+        if(empName){
+            const data = await Employee.findAll({
+                where: {
+                    empName: { 
+                      [Op.like]: `%${empName}%`
+                    }
+                  },
+                // limit: limit,
+                // offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Employee.findAll({
+                // limit: limit,
+                // offset: offset,
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
+        }
+        
+       
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
+    }
+})
 
 
 

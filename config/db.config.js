@@ -29,6 +29,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 const admin=require("../model/superAdmin/admin.model")(sequelize, Sequelize)
+const departments=require("../model/superAdmin/department.model")(sequelize, Sequelize)
+
 
 const customers=require("../model/customer/customer.model")(sequelize, Sequelize)
 const customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
@@ -141,6 +143,7 @@ db.assignedTasks = assignedTasks
 
 const paymentAllowanceDeduction = require("../model/employeeManager/paymentAllowanceDeduction.model")(sequelize,Sequelize)
 const advance = require("../model/employeeManager/advance.model")(sequelize,Sequelize)
+const empallowance = require("../model/employeeManager/empallowance.model")(sequelize, Sequelize)
 
 /// 1:M
 employees.hasMany(attendance, { foreignKey: 'id' });
@@ -160,6 +163,8 @@ db.employees = employees
 db.employeePaymentDetails = employeePaymentDetails
 db.attendance = attendance
 db.advance = advance
+db.empallowance = empallowance
+
 
 
 
@@ -170,5 +175,7 @@ db.advance = advance
 
 
 db.admin = admin;
+db.departments = departments;
+
 
 module.exports = db;
