@@ -103,12 +103,17 @@ exports.getAdmin = asyncHandler(async (req, res) => {
 
 exports.getAdminById = asyncHandler(async (req, res) => {
   try {
-    const id = req.params.id; //Extracting Admin ID from Request Parameters
+    const id = req.params.id;
+    // console.log('===================',id);
     if (!id) {
-      res.status(400).send({ message: "can't remove ,invalid Admin" });
+      res.status(400).send({ message: "admin not found" });
       return;
     }
-    const data = await Admin.findOne({ where: { id: id } });
+    const data = await Admin.findByPk(id, {
+      include: Employee,
+      attributes: { exclude: ['password'] },
+    });
+    // console.log(data);
     res.status(200).json(data);
   } catch (error) {
     res.status(400);

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 const db = require('../config/db.config');
 const Admin = db.admin;
+const Employee = db.employees
 const { validationResult } = require('express-validator');
 
 
@@ -12,15 +13,22 @@ const { validationResult } = require('express-validator');
 // @desc     load user relevent to token
 exports.getCurruntAdmin = asyncHandler(async (req, res) => {
   try {
+    // console.log('++++++++++++++++++++',req.admin);
     if (!req.admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }
+    // const data = await Admin.findByPk(req.admin.id, {
+    //   attributes: { exclude: ['password'] },
+    // });
     const data = await Admin.findByPk(req.admin.id, {
+      include: Employee,
       attributes: { exclude: ['password'] },
     });
     if (!data) {
       return res.status(404).json({ message: 'Admin not found' });
     }
+
+    // console.log('+++++++++++++++++++++++++',data.employee);
     res.status(200).json(data);
   } catch (error) {
     res.status(400);
@@ -37,14 +45,20 @@ exports.login = asyncHandler(async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   const { email, password } = req.body;
-
+  // console.log('++++++++++++++++++++++++++++++++',email,password);
   // Check if admin exists
-  const admin = await Admin.findOne({ where: { email } });
 
-  console.log('++++++++++++++++++++++++++++',admin);
+  const employee = await Employee.findOne({ where: { empEmail: email } });
 
-  if (!admin) {
+  // console.log('++++++++++++++++++++++++++++',employee);
+  const admin = await Admin.findOne({ where: { empId:employee.id } });
+  // console.log('++++++++++++++++++++++++++++', admin);
+
+  if (!employee) {
     return res.status(400).json({ message: 'Invalid credentials' });
+  }
+  if (!admin) {
+    return res.status(400).json({ message: 'Access denied' });
   }
 
   // Check if password matches
@@ -53,11 +67,10 @@ exports.login = asyncHandler(async (req, res) => {
   if (!isMatch) {
     return res.status(400).json({ message: 'Invalid credentials' });
   }
-
   // Create JWT token
   const payload = {
     admin: {
-      id: admin.id,
+      id: admin.empId,
       privileges: admin.privileges,
     },
   };
