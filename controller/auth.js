@@ -10,7 +10,6 @@ const { validationResult } = require('express-validator');
 
 // @route    get admin/auth
 // @desc     load user relevent to token
-// @access   public
 exports.getCurruntAdmin = asyncHandler(async (req, res) => {
   try {
     if (!req.admin) {
@@ -22,7 +21,6 @@ exports.getCurruntAdmin = asyncHandler(async (req, res) => {
     if (!data) {
       return res.status(404).json({ message: 'Admin not found' });
     }
-    console.log('Admin data found:', data);
     res.status(200).json(data);
   } catch (error) {
     res.status(400);
@@ -32,7 +30,6 @@ exports.getCurruntAdmin = asyncHandler(async (req, res) => {
 
 // @route    POST admin/auth
 // @desc     Authenticate user & get token
-// @access   Public
 
 exports.login = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
@@ -43,6 +40,8 @@ exports.login = asyncHandler(async (req, res) => {
 
   // Check if admin exists
   const admin = await Admin.findOne({ where: { email } });
+
+  console.log('++++++++++++++++++++++++++++',admin);
 
   if (!admin) {
     return res.status(400).json({ message: 'Invalid credentials' });

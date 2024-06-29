@@ -3,18 +3,15 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-// const database=require("./config/mssql.js")
 const socketIo = require('socket.io');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
-// app.use(cookieParser());
 
 const db = require('./config/db.config.js');
 db.sequelize.sync();
-
 
 const { createCustomerRequest } = require('./controller/studioSide/customerManager/customerRequest.js');
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");
@@ -28,13 +25,6 @@ app.use("/customerManager",customerManagerRouter)
 app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
 app.use('/superAdmin', superAdminRouter);
-
-
-// const { notFound, errorHandler } = require('./middleware/errorHandler.js');
-
-
-
-
 
 const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
 

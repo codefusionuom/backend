@@ -4,48 +4,50 @@ const bcrypt = require('bcryptjs'); //bcrypt: This is a library for hashing pass
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const Admin = db.admin;
+const Employee=db.employees;
 require('dotenv').config();
 
-exports.createAdmin = asyncHandler(async (req, res) => {
-  const { employeeName, employeeId, address, telephone, privileges, password,email } =
-    req.body; //destructuring
-  if (employeeId) {
-    const oldAdmin = await Admin.findOne({
-      where: { employeeId: employeeId },
-    });
 
-    if (oldAdmin) {
-      res.status(400).send({ message: 'admin already exist' });
-      return;
-    }
-  } else {
-    res.status(400).send({ message: 'Admin required employee id' });
-    return;
+exports.createAdmin = asyncHandler(async (req, res) => {
+  // console.log(req.body);
+  const { privileges, password,email } =req.body;
+  // if (email) {
+  //   const oldAdmin = await Admin.findOne({
+  //     where: { email: email },
+  //   });
+
+  //   if (oldAdmin) {
+  //     res.status(400).send({ message: 'admin already exist' });
+  //     return;
+  //   }
+  // } else {
+  //   res.status(400).send({ message: 'Admin required email' });
+  //   return;
+  // }
+
+  const employee = await Employee.findOne({ where: { empEmail: email } });
+
+  console.log('++++++++++++++++++++',employee);
+  if (!employee) {
+    return res
+      .status(400)
+      .send({ message: 'No employee found with this email' });
   }
 
   try {
-    const admin = {
-      employeeName,
-      employeeId,
-      address,
-      telephone,
-      privileges,
-      password,
-      email
-    };
-
-    const data = await Admin.create(admin); //create new addmin record
-
-    //encript password
     const salt = await bcrypt.genSalt(10); //genSalt: This method generates a salt, which is a random value added to the password before hashing to ensure that identical passwords have different hashes.
+    hashedPassword = await bcrypt.hash(password, salt); //bcrypt.hash: This method takes the plain text password and the generated salt, and returns a hashed version of the password
 
-    admin.password = await bcrypt.hash(password, salt); //bcrypt.hash: This method takes the plain text password and the generated salt, and returns a hashed version of the password
-    await Admin.update(
-      { password: admin.password },
-      { where: { id: data.id } }
-    );
+     const admin = {
+      empId:employee.id,
+       privileges,
+       password: hashedPassword,
+      //  email,
+     };
 
-    res.status(201).json({ message: 'Admin registered' });
+    const data = await Admin.create(admin);
+
+    res.status(201).json({ message: 'Admin registered',data });
   } catch (error) {
     res.status(400);
     throw new Error(
@@ -89,10 +91,27 @@ exports.updateAdmin = asyncHandler(async (req, res) => {
 
 exports.getAdmin = asyncHandler(async (req, res) => {
   try {
-    const data = await Admin.findAndCountAll({});
-    res.status(200).json(data.rows);
+    const data = await Admin.findAll({
+      include: Employee
+      });
+    res.status(200).json(data);
   } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Admins");
+  }
+});
+
+exports.getAdminById = asyncHandler(async (req, res) => {
+  try {
+    const id = req.params.id; //Extracting Admin ID from Request Parameters
+    if (!id) {
+      res.status(400).send({ message: "can't remove ,invalid Admin" });
+      return;
+    }
+    const data = await Admin.findOne({ where: { id: id } });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Admin");
   }
 });
