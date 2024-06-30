@@ -27,7 +27,7 @@ module.exports = (sequelize, Sequelize) => {
         key: 'id',
       },
     },
-    privileges: {
+    privilege: {
       type: Sequelize.STRING,
     },
     password: {

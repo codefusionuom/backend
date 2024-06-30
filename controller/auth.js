@@ -71,7 +71,7 @@ exports.login = asyncHandler(async (req, res) => {
   const payload = {
     admin: {
       id: admin.empId,
-      privileges: admin.privileges,
+      privileges: admin.privilege,
     },
   };
 

@@ -90,6 +90,35 @@ exports.updateEmployee = asyncHandler(async (req, res) => {
     }
 })
 
+exports.getEmployeeSearch = asyncHandler(async (req, res) => {
+    const empName = req.query.empName;
+    // console.log("+++++++++++++++++++++++++++++++++get Employee",empName);
+    try {
+        if(empName){
+            const data = await Employee.findAll({
+                where: {
+                    empName: { 
+                      [Op.like]: `%${empName}%`
+                    }
+                  },
+                order: [['createdAt', 'DESC']]
+            })
+            // console.log(data);
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Employee.findAll({
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
+        }
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
+    }
+})
+
 
 exports.deleteEmplloyee = asyncHandler(async (req, res) => {
 

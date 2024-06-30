@@ -13,7 +13,7 @@ function authorize(requiredPrivileges) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!requiredPrivileges.includes(decoded.admin.privileges)) {
+      if (!requiredPrivileges.includes(decoded.admin.privilege)) {
         return res
           .status(403)
           .json({ message: 'Access denied. Insufficient privileges.' });

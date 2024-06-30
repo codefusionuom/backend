@@ -33,11 +33,21 @@ router.post(
   login
 );
 
-router.post('/admin', authorize(['super_admin']), createAdmin);
-router.get('/admin', authorize(['super_admin']), getAdmin);
-router.put('/admin/:id', authorize(['super_admin']), updateAdmin);
-router.delete('/admin/:id', authorize(['super_admin']), deleteAdmin);
-router.get('/admin/:id', authorize(['super_admin']), getAdminById);
+router.post('/admin',
+  //  authorize(['super_admin']), 
+   createAdmin);
+router.get('/admin',
+  //  authorize(['super_admin']), 
+   getAdmin);
+router.put('/admin/:id',
+  //  authorize(['super_admin']), 
+   updateAdmin);
+router.delete('/admin/:id',
+  //  authorize(['super_admin']),
+    deleteAdmin);
+router.get('/admin/:id', 
+  // authorize(['super_admin']),
+   getAdminById);
 
 //department
 router.get('/departmrnt/:page', getDepartment);
