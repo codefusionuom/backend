@@ -41,7 +41,7 @@ router.get('/adminId/:id', getAdminByid);
 router.get('/admin/?search');
 
 //department
-router.get('/departmrnt/:page', getDepartment);
+router.get('/department', getDepartment);
 router.put('/department/:id', updateDepartment);
 router.post('/department', createDepartment);
 router.delete('/departmentd/:id', deleteDepartment);

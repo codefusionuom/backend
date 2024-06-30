@@ -29,14 +29,15 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 const admin=require("../model/superAdmin/admin.model")(sequelize, Sequelize)
+const departments=require("../model/superAdmin/department.model")(sequelize, Sequelize)
 
 const customers=require("../model/customer/customer.model")(sequelize, Sequelize)
 const customerPayments=require("../model/customer/payment.model")(sequelize, Sequelize)
 const customerRequests=require("../model/customer/customerRequest.model")(sequelize, Sequelize)
 
+//const eventRequests=require("../model/customer/eventRequest.model")(sequelize, Sequelize)
+const eventServices = require("../model/customer/eventService.model")(sequelize, Sequelize);
 const eventRequests=require("../model/customer/eventRequest.model")(sequelize, Sequelize)
-const eventRequestServices = require("../model/customer/eventRequestService.model")(sequelize, Sequelize);
-const eventRequestServicesServices=require("../model/customer/eventRequestServiceService")(sequelize, Sequelize)
 
 const services=require("../model/customer/service.model")(sequelize, Sequelize)
 const serviceInputFields=require("../model/customer/serviceInputField.model")(sequelize, Sequelize)
@@ -51,8 +52,7 @@ const employees = require("../model/employeeManager/employee.model")(sequelize,S
 const employeePaymentDetails = require("../model/employeeManager/employeePaymentDetails.model")(sequelize,Sequelize)
 const attendance = require("../model/employeeManager/attendance.model")(sequelize,Sequelize)
 
-// customers.hasMany(customerPayments);
-// customerPayments.belongsTo(customers);
+
 services.belongsTo(services, { as: 'parent', foreignKey: 'parentService' });
 
 services.hasMany(serviceInputFields)
@@ -63,6 +63,9 @@ serviceInputFieldValues.belongsTo(serviceInputFields)
 
 customers.hasMany(events);
 events.belongsTo(customers);
+
+services.hasMany(events);
+events.belongsTo(services);
 
 events.hasMany(tasks);
 tasks.belongsTo(events);
@@ -88,35 +91,52 @@ employees.hasMany(assignedTasks, { foreignKey: 'emplyId' });
 events.hasMany(customerPayments);
 customerPayments.belongsTo(events);
 
+// eventRequests.hasMany(customerPayments);
+// customerPayments.belongsTo(eventRequests);
 // event requests
-customers.hasMany(eventRequests);
-eventRequests.belongsTo(customers);
+// customers.hasMany(eventServices);
+// eventServices.belongsTo(customers);
 
-eventRequests.hasMany(eventRequestServices);
-eventRequestServices.belongsTo(eventRequests);
+// eventRequests.hasMany(eventRequestServices);
+// eventRequestServices.belongsTo(eventRequests);
 
-services.hasMany(eventRequestServices);
-eventRequestServices.belongsTo(services);
+
 
 
 // Associations
-eventRequestServices.hasMany(eventRequestServicesServices, {
-  foreignKey: 'eventRequestServiceId',
-  onDelete: 'NO ACTION',
-  onUpdate: 'NO ACTION',
-});
-eventRequestServicesServices.belongsTo(eventRequestServices, {
-  foreignKey: 'eventRequestServiceId',
+// eventRequests.hasMany(eventRequestServices, {
+//   foreignKey: 'eventRequestServiceId',
+//   onDelete: 'NO ACTION',
+//   onUpdate: 'NO ACTION',
+// });
+
+// eventRequestServices.belongsTo(eventRequests, {
+//   foreignKey: 'eventRequestServiceId',
+//   onDelete: 'NO ACTION',
+//   onUpdate: 'NO ACTION',
+// });
+
+
+
+events.hasMany(eventServices, {
+  foreignKey: 'eventId',
   onDelete: 'NO ACTION',
   onUpdate: 'NO ACTION',
 });
 
-serviceInputFields.hasMany(eventRequestServicesServices, {
+eventServices.belongsTo(events, {
+  foreignKey: 'eventId',
+  onDelete: 'NO ACTION',
+  onUpdate: 'NO ACTION',
+});
+
+serviceInputFields.hasMany(eventServices, {
   foreignKey: 'serviceInputFieldId',
   onDelete: 'NO ACTION',
   onUpdate: 'NO ACTION',
 });
-eventRequestServicesServices.belongsTo(serviceInputFields, {
+
+eventServices.belongsTo(serviceInputFields, {
   foreignKey: 'serviceInputFieldId',
   onDelete: 'NO ACTION',
   onUpdate: 'NO ACTION',
@@ -127,9 +147,9 @@ db.customerPayments=customerPayments
 db.customerRequests=customerRequests
 
 
-db.eventRequests=eventRequests
-db.eventRequestServices=eventRequestServices
-db.eventRequestServicesServices=eventRequestServicesServices
+// db.eventRequests=eventRequests
+db.eventServices=eventServices
+
 
 db.services=services
 db.serviceInputFields=serviceInputFields
@@ -168,7 +188,7 @@ db.advance = advance
 
 
 
-
+db.departments=departments
 db.admin = admin;
 
 module.exports = db;
