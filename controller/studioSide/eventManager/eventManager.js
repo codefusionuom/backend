@@ -71,26 +71,19 @@ const createEvent = asyncHandler(async (req, res) => {
   }
 });
 
-const updateEvent =  asyncHandler(async( req ,res ) => {
+const updateEventConfirm =  asyncHandler(async( req ,res ) => {
 try {
-  console.log("llllllllllllllllllllllllll");
-    const { serviceType , status , date , customerId } = req.body;
-    const eventId = req.params.eventId;
-    console.log("fgggggggggggggggggg");
-  console.log(eventId);
-    const packedtoUpdate = {}
-  
-    if(serviceType) packedtoUpdate.serviceType = serviceType;
-    if(status) packedtoUpdate.status = status;
-    if(date) packedtoUpdate.date = date;
-    if(customerId) packedtoUpdate.customerId = customerId;
-  
-    const upEvent = await Event.update(packedtoUpdate , {where :{eventId : eventId}})
-    res.send(upEvent)
+  const id = req.params.id;
+    const {  status } = req.body;
+    console.log(id,status);
+    const confirmedEvent = await Event.update({status:status} , {where :{id : id}})
+    res.send(confirmedEvent)
 } catch (error) {
   res.status(400).json({ message: error.message });
 }
 })
+
+const updateEvent=asyncHandler(async(req, res) =>{})
 
 const allEvents = asyncHandler(async(req, res) =>{
  try {
@@ -339,5 +332,6 @@ module.exports = {
   getSelectedDayEvents,
   getCustomer,
   getEvent,
-  getAllEmployees
+  getAllEmployees,
+  updateEventConfirm
 };

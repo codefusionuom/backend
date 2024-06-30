@@ -16,7 +16,7 @@ const db = require('./config/db.config.js');
 db.sequelize.sync();
 
 
-const { createCustomerRequest } = require('./controller/studioSide/customerManager/customerRequest.js');
+const { createCustomerRequest, createCustomerRequestOnline } = require('./controller/studioSide/customerManager/customerRequest.js');
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
@@ -48,10 +48,11 @@ const io = socketIo(server,{
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  socket.on('customerRequest', (req) => {
+  socket.on('customerRequest',async (req) => {
     // console.log('customer request',req);
-    createCustomerRequest(req)
-    io.emit("customerRequest",req)
+    const data=await createCustomerRequestOnline(req)
+    console.log(req,data);
+    io.emit("customerRequest",data)
   })
 });
 
