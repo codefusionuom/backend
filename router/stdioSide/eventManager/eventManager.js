@@ -2,7 +2,7 @@ const express =require('express');
 const { createEvent, updateEvent, allEvents, test, filterEventsBetween, getOnedayEvents, getTodayEvents, getSelectedDayEvents, getCustomer, getEvent, getAllEmployees } = require('../../../controller/studioSide/eventManager/eventManager');
 const router = express.Router();
 const db = require("../../../config/db.config");
-const { createTask, getEventCategories, getTasksByEmployeeId, getAllTasks, getTaskById, getEmployeesByTaskId } = require('../../../controller/studioSide/eventManager/task');
+const { createTask, getEventCategories, getTasksByEmployeeId, getAllTasks, getTaskById, getEmployeesByTaskId, updateTask1, updateTask } = require('../../../controller/studioSide/eventManager/task');
 const { createAssignedTask } = require('../../../controller/studioSide/eventManager/assignedTasks');
 //event Manager
 router.get("/Filter/Between",filterEventsBetween);
@@ -24,11 +24,11 @@ router.get("/eventManager/events",);
 //-----------Tasks routes---------------
 router.post("/tasks/create", createTask);
 router.post("/tasks/assigned-Task/create", createAssignedTask);
-
+router.post("/tasks/updateTask/", updateTask);
 router.get("/all-employees", getAllEmployees);
 router.get("/event-categories", getEventCategories);
 router.get("/tasks/all-tasks", getAllTasks);
-router.get('/tasks/task-dettail/:taskId', getTaskById);
+router.get('/tasks/task-dettail/', getTaskById);
 router.get("/task/assigned-employees/:taskId", getEmployeesByTaskId);
 
 //-----------Assigned Task routes---------------
