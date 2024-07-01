@@ -28,6 +28,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 const admin = require('../model/superAdmin/admin.model')(sequelize, Sequelize);
+const users = require('../model/user.model')(sequelize, Sequelize);
 
 const customers = require('../model/customer/customer.model')(
   sequelize,
@@ -207,6 +208,13 @@ admin.belongsTo(employees, {
   foreignKey: 'empId',
 });
 
+employees.hasOne(users, {
+  foreignKey: 'empId',
+});
+users.belongsTo(employees, {
+  foreignKey: 'empId',
+});
+
 db.paymentAllowanceDeduction = paymentAllowanceDeduction;
 db.employees = employees;
 db.employeePaymentDetails = employeePaymentDetails;
@@ -214,5 +222,6 @@ db.attendance = attendance;
 db.advance = advance;
 
 db.admin = admin;
+db.users=users
 
 module.exports = db;

@@ -18,6 +18,7 @@ const customerManagerRouter=require("./router/stdioSide/customerManager/index.js
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
 const superAdminRouter = require('./router/stdioSide/superAdmin/index.js');
+const userRouter = require('./router/userRouter.js');
 
 const { notFound, errorHandler } = require('./middleware/errorHandler.js');
 
@@ -25,6 +26,7 @@ app.use("/customerManager",customerManagerRouter)
 app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
 app.use('/superAdmin', superAdminRouter);
+app.use('/', userRouter);
 
 const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
 
