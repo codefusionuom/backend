@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
       overtimeRate: {
         type: Sequelize.INTEGER
       },
-      doubleovertimeRate: {
+      salary: {
         type: Sequelize.INTEGER
       }
     });

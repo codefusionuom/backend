@@ -6,7 +6,7 @@ const EmployeePaymentDetails = db.employeePaymentDetails;
 
 
 exports.createEmployeePaymentDetails = asyncHandler(async (req, res) => {
-    const { id,bank,epfNumber,accoutNumber,overtimeRate,doubleovertimeRate} = req.body
+    const { id,bank,epfNumber,accoutNumber,overtimeRate,empSalary} = req.body
     const [empPaymentDetails, created] = await EmployeePaymentDetails.findOrCreate({
         where: { id: id },
         defaults: {
@@ -14,7 +14,7 @@ exports.createEmployeePaymentDetails = asyncHandler(async (req, res) => {
             epfNumber: epfNumber,
             accountNumber: accoutNumber,
             overtimeRate: overtimeRate,
-            doubleovertimeRate: doubleovertimeRate,
+            empSalary: empSalary,
         }
     });
     

@@ -37,31 +37,23 @@ exports.createAttendance = asyncHandler(async (req, res) => {
   });
 
 exports.getAttendance = asyncHandler(async (req, res) => {
-    // const page = req.params.page;
-    // let limit = 4;
-    // let offset = limit * (page - 1)
+    const page = req.query.page;
+    let limit = 8;
+    let offset = limit * (page - 1)
     try {
-        const { count, rows } = await Attendance.findAndCountAll({
+        const  attendance  = await Attendance.findAndCountAll({
             include: [
                 {
                   model: Employee,
                   attributes: ['empName'],
-                //   where: {
-  
-                //       [Op.or]: [
-                //           { mobilePhone: query },
-                //           { email: query },
-                         
-                //         ] 
-                //   }
                 }
               ],
             limit: 10,
-            // limit: limit,
-            // offset: offset,
+            limit: limit,
+            offset: offset,
         });
 
-        const attendance = rows;
+        // const attendance = [count,rows];
 
         if (!attendance || attendance.length === 0) {
             res.status(200).json([]);
@@ -122,6 +114,82 @@ exports.getCheckOutTotal = asyncHandler(async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
+
+
+exports.getAttendanceandSearch = asyncHandler(async (req, res) => {
+    const page = req.query.page;
+    const id = req.query.id;
+    const date = req.query.date;
+    const limit = 8;
+    console.log("get Employee",page,id,limit);
+    let offset = limit * (page - 1)
+    try {
+        if(id !== "None" && date !== "None" ){
+            const data = await Attendance.findAndCountAll({
+                where: {
+                    id: id,
+                    date: {
+                        [Op.like]: `${date}%`
+                    }
+                  },
+                  include: [
+                    {
+                      model: Employee,
+                      attributes: ['empName'],
+                    }
+                  ],
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        else if (id !== "None") {
+            const data = await Attendance.findAndCountAll({
+                where: {
+                    id: id,
+                  },
+                  include: [
+                    {
+                      model: Employee,
+                      attributes: ['empName'],
+                    }
+                  ],
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Attendance.findAndCountAll({
+                where: {
+                    date: {
+                        [Op.like]: `${date}%`
+                    },
+                  },
+                  include: [
+                    {
+                      model: Employee,
+                      attributes: ['empName'],
+                    }
+                  ],
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        
+       
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
+    }
+})
+
 
 
 // exports.getCheckInTotal = asyncHandler(async (req, res) => {

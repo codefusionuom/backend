@@ -3,6 +3,7 @@ const db = require("../../../config/db.config");
 const { Op, findOrCreate } = require("sequelize");
 // const employeeModel = require("../../../model/employeeManager/employee.model");
 const Employee = db.employees;
+const Department = db.departments;
 
 
 
@@ -136,6 +137,13 @@ exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
         }
         else{
             const data = await Employee.findAndCountAll({
+                include: [
+                    {
+                      model: Department,
+                      attributes: ['id','departmentName'],
+                    //   where: {empDepartment: id }
+                    }
+                  ],
                 limit: limit,
                 offset: offset,
                 order: [['createdAt', 'DESC']]
@@ -185,6 +193,25 @@ exports.getEmployeeSearch = asyncHandler(async (req, res) => {
         
        
 
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
+    }
+})
+
+exports.getEmployees = asyncHandler(async (req, res) => {
+    const page = req.query.page;
+    const limit = 8;
+    console.log("get Employee",page);
+    let offset = limit * (page - 1)
+    try {
+            const data = await Employee.findAndCountAll({
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
     } catch (error) {
         res.status(400);
         throw new Error(error.message || "can't get Employees");

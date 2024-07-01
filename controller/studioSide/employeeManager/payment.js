@@ -12,8 +12,6 @@ exports.createAdvance = asyncHandler(async (req, res) => {
     const advance = await Advance.create({
             empId : empId,
             advanceAmount: advanceAmount,
-            advancePaidAmount: 0,
-            advancePaidStatus: 0
     })
     res.status(200).json(advance);
     
