@@ -239,6 +239,7 @@ const updateTask = asyncHandler(async (req, res) => {
     } = req.body;
     let { date } = req.body;
 console.log("Task id ***************************************************:" , taskId);
+console.log(req.body);
     // Start a transaction
     await db.sequelize.transaction(async (transaction) => {
       // Find the existing task
