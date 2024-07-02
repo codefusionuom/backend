@@ -5,6 +5,7 @@ const { rows } = require("mssql");
 const Task = db.tasks;
 const AssignedTask = db.assignedTasks;
 const Employee = db.employees;
+const { Op, Sequelize } = require("sequelize");
 
 // const createTask = asyncHandler(async (req, res) => {
 //     try {
@@ -51,7 +52,8 @@ const createTask = asyncHandler(async (req, res) => {
       //   taskId,
     } = req.body;
     let { date } = req.body;
-
+    console.log("eventId: " ,eventId)
+    console.log("employeeIdList: " ,employeeIdList)
     // Correct the date for timezone offset
     const selectedDateWithOnedayOff = new Date(date);
     const correctedDate = new Date(
@@ -212,8 +214,9 @@ const getAllTasks = asyncHandler(async (req, res) => {
 //   });
 
 const getTaskById = asyncHandler(async (req, res) => {
-  console.log("task get by id");
+  console.log("task get by id" , );
   const { taskId } = req.query; // Get the task ID from the request parameters
+  // console.log("task get by id" , taskId);
 
   try {
     const task = await Task.findByPk(taskId);
@@ -335,6 +338,194 @@ console.log(req.body);
 });
 
 
+const searchTasksByTaskname= asyncHandler( async(req,res) => {
+  const {taskName} =req.body;
+  // const {taskName} =req.query;
+  console.log("searching customer")
+  console.log("taskName:((((((((((((((((((((())))))))))))))))))))) " );
+  console.log("taskName:((((((((((((((((((((())))))))))))))))))))) " ,taskName);
+  try {
+    // { where: { eventId: eventId } }
+      const data = await Task.findAll({
+        where: {
+          taskName: { 
+            [Op.like]: `%${taskName}%`
+          },
+        },  
+      });
+      console.log("data "+ data);
+      console.log( data);
+       return res.status(200).json(data)  
+  } catch (error) {
+    console.log(error);
+     return res.status(400).json({ error: error})
+  // throw new Error(error.message || "can't find Customer") 
+  }
+
+})
+
+
+
+const getSelectedDayTasks =  asyncHandler(async(req, res) =>{
+  try {
+    let { date  } = req.body;
+    console.log("req =" , req.body);
+    console.log("REceved date :" , date); 
+    var todayWithOnedayOff = new Date(date);
+    console.log("todayWithOnedayOff : " , todayWithOnedayOff);
+    const today =  new Date( todayWithOnedayOff.getTime() + Math.abs(todayWithOnedayOff.getTimezoneOffset()*60000) );
+    
+  console.log("today  :" , today);
+  const startOfDay = new Date(today);
+  startOfDay.setHours(0, 0, 0, 0);
+  console.log("startOfDay :" , startOfDay);
+  // console.log("start Of Day Fun:" , setToStartOfDay(today));
+  // const todayStart = moment().startOf('day').toISOString();
+
+  const todayBegin = new Date(setToStartOfDay(today));
+
+  
+  console.log("0.0.0. :", todayBegin); // Outputs: "2024-03-13T00:00:00.000Z"
+
+  const endOfDay = new Date(today);
+  endOfDay.setUTCHours(23, 59, 59, 999);
+  console.log("endOfDay :" , endOfDay);
+
+
+  
+    await Task.findAll({
+      where: {
+        date: {
+          [Op.between] : [todayBegin , endOfDay ]
+        }
+      }
+      ,
+      // include: [Customer]
+    }).then((result) => res.status(200).json({ todayEvents: result }))
+    .catch((error) => res.status(404).json({ error: error }));
+  } catch (error) {
+    res.status(404).json({ error: error });
+  }
+})
+
+exports.getEmpAllowanceForSalary = asyncHandler(async (req, res) => {
+  const id = req.query.id; // Assuming you're passing id as a route parameter
+  const allowance = await EmpAllowance.findAndCountAll({
+      where: {
+          empId: id
+      },
+      include: [
+          {
+               model: AllowanceDeduction,  
+               attributes: ['allowanceDeductionName','allowanceDeduction'], 
+               where: {
+                  allowanceDeduction: "Allowance"
+              },
+              }, 
+          ],
+  });
+  if (allowance === null) {
+      console.log('Allowance Record not found!');
+      res.status(404).json({ error: 'Allowance Record not found' });
+  } else {
+      res.status(200).json(allowance);
+  }
+});
+
+const getEmpAllowanceandSearch = asyncHandler(async (req, res) => {
+  const page = req.query.page;
+  const empName = req.query.empName;
+  const limit = 8;
+  console.log("get Employee",page,empName,limit);
+  let offset = limit * (page - 1)
+  try {
+      if(empName){
+          const data = await Event.findAndCountAll({
+              // where: {
+              //     empName: { 
+              //       [Op.like]: %${empName}%
+              //     }
+              //   },
+              include: [
+                  { 
+                      model: paymentAllowanceDeduction,  
+                      attributes: ['allowanceDeduction','allowanceDeductionName'],
+                   },{ 
+                      model: Employee,  
+                      attributes: ['empName'], 
+                      where: {
+                          empName: { 
+                            [Op.like]: `%${empName}%`
+                          }
+                        },
+                  }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          })
+          res.status(200).json(data)
+      }
+      else{
+          const data = await empallowance.findAndCountAll({
+              include: [{ model: paymentAllowanceDeduction,  attributes: ['allowanceDeduction','allowanceDeductionName'], },{ model: Employee,  attributes: ['empName'], }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          }) 
+          console.log(data);
+          res.status(200).json(data)
+      }
+      
+     
+
+  } catch (error) {
+      res.status(400);
+      throw new Error(error.message || "can't get allowance/deductions");
+  }
+})
+
+
+// Define the deleteTask controller function
+const deleteTask = asyncHandler(async (req, res) => {
+  try {
+
+    const { taskId } = req.query;
+    // console.log(taskId)
+    console.log("task get by id" , taskId);
+
+
+    if (!taskId) {
+      return res.status(400).json({ message: "Task ID is required" });
+    }
+
+    // Start a transaction
+    await db.sequelize.transaction(async (transaction) => {
+      // Delete associated records in AssignedTask table first
+      await AssignedTask.destroy({
+        where: { taskId: taskId },
+        transaction
+      });
+
+      // Delete the task from Task table
+      const rowsDeleted = await Task.destroy({
+        where: { id: taskId },
+        transaction
+      });
+
+      if (rowsDeleted === 0) {
+        throw new Error("Task not found or already deleted");
+      }
+
+      // If all operations succeed, the transaction will be committed automatically
+    });
+
+    // Send success response
+    res.status(200).json({ message: "Task deleted successfully!" });
+  } catch (error) {
+    console.error("Error in deleteTask:", error.message);
+    res.status(500).json({ message: "Could not delete the task!", error: error.message });
+  }
+});
 
 module.exports = {
   getTaskById,
@@ -344,5 +535,17 @@ module.exports = {
   getTasksByEmployeeId,
   getAllTasks,
   getEmployeesByTaskId,
-  updateTask
+  updateTask,
+  searchTasksByTaskname,
+  getSelectedDayTasks,
+  deleteTask
 };
+
+function setToStartOfDay(date) {
+  const newDate = new Date(date);
+  newDate.setUTCHours(0, 0, 0, 0); // Set hours, minutes, seconds, milliseconds to 0
+  return newDate;
+}
+
+const todayStart = setToStartOfDay(new Date()); // Get today's start in UTC
+console.log(todayStart); // Output: 2024-03-13T00:00:00.000Z

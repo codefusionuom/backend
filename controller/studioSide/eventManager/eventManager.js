@@ -324,6 +324,59 @@ const getAllEmployees = asyncHandler(async(req, res) =>{
   }
 });
 
+const getEmpAllowanceandSearch = asyncHandler(async (req, res) => {
+  const page = req.query.page;
+  const empName = req.query.empName;
+  const limit = 8;
+  console.log("get Employee",page,empName,limit);
+  let offset = limit * (page - 1)
+  try {
+      if(empName){
+          const data = await Event.findAndCountAll({
+              // where: {
+              //     empName: { 
+              //       [Op.like]: %${empName}%
+              //     }
+              //   },
+              include: [
+                  { 
+                      model: paymentAllowanceDeduction,  
+                      attributes: ['allowanceDeduction','allowanceDeductionName'],
+                   },{ 
+                      model: Customer,  
+                      attributes: ['empName'], 
+                      where: {
+                          empName: { 
+                            [Op.like]: `%${empName}%`
+                          }
+                        },
+                  }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          })
+          res.status(200).json(data)
+      }
+      else{
+          const data = await empallowance.findAndCountAll({
+              include: [{ model: paymentAllowanceDeduction,  attributes: ['allowanceDeduction','allowanceDeductionName'], },{ model: Employee,  attributes: ['empName'], }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          }) 
+          console.log(data);
+          res.status(200).json(data)
+      }
+      
+     
+
+  } catch (error) {
+      res.status(400);
+      throw new Error(error.message || "can't get allowance/deductions");
+  }
+})
+
+
 
  const getAllEventTypes = asyncHandler(async(req, res) =>{
   let eventTypes = [];

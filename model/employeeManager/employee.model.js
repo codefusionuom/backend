@@ -37,6 +37,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    empPassword: {
+      type: Sequelize.STRING,
+    }
   });
   return employees;
 };
