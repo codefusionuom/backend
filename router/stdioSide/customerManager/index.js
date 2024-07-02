@@ -2,9 +2,9 @@ const express =require('express')
 const router = express.Router();
 const{getCustomers, createCustomers, deleteCustomer,getSearchCustomerEvents,updateCustomer,getSearchCustomer}=require('../../../controller/studioSide/customerManager/customer');
 const {  } = require('./tutorial');
-const { createPayment,getCustomerPayment,getCustomerPaymentDetails ,getSearchAllPayment} = require('../../../controller/studioSide/customerManager/payment');
+const { createPayment,getCustomerPayment,getCustomerPaymentDetails ,getSearchAllPayment, paymentByEvent} = require('../../../controller/studioSide/customerManager/payment');
 const { getAllCustomerRequests, updateCustomerRequest } = require('../../../controller/studioSide/customerManager/customerRequest');
-const { getServices, getService, createService, updateService, deleteService } = require('../../../controller/studioSide/customerManager/service');
+const { getServices, getService, createService, updateService, deleteService, updateServiceInput, updateServiceSelect, updateServiceOptions } = require('../../../controller/studioSide/customerManager/service');
 const { createEventRequest, getAllEventRequests, getEventRequest } = require('../../../controller/studioSide/customerManager/eventRequest');
 
 
@@ -20,7 +20,7 @@ router.get("/customerEvents/:mobilePhone",getSearchCustomerEvents);
 //payments
 router.get("/payment", getCustomerPayment); // getcustomers
 router.post("/payment",createPayment);
-// router.get("/payment/",getSearchAllPayment );// wait for date format ,time range
+ router.get("/paymentByEvent/:id",paymentByEvent );// wait for date format ,time range
 router.get("/payment/:id", getCustomerPaymentDetails);
 
 //customerRequests
@@ -36,7 +36,10 @@ router.get("/eventRequest/:id", getEventRequest);
 router.get("/Service",getServices );
 router.get("/Service/:id",getService );
 router.post("/Service", createService);
-router.put("/Service/:id",updateService );
+router.put("/service/service/:id",updateService );
+router.put("/service/input/:id",updateServiceInput );
+router.put("/service/select/:id",updateServiceSelect );
+router.put("/service/option/:id",updateServiceOptions );
 router.delete("/Service/:id", deleteService)
 //router.get("/customerEvents/:mobilePhone",getSearchCustomerEvents);
 
