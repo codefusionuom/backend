@@ -13,7 +13,9 @@ router.post("/event", createEvent);
 router.get("/all-events", allEvents);
 router.post("/getCustomer",getCustomer);
 router.get("/eventDetails/:eventId",getEvent);
-router.post("/updateEvent/:eventId", updateEvent);
+
+router.put("/updateEvent/:id", updateEvent);
+
 router.get("/eventManager/searchEvent",);
 router.get("/eventManager/FilterEvents/:status",);
 router.get("/eventManager/eventRequests",);

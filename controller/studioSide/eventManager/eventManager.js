@@ -7,7 +7,7 @@ const crypto = require("crypto");
 let existingEvent;
 const Customer = db.customers;
 const Employee = db.employee;
-
+const EventServices = db.eventServices;
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
   try {
@@ -83,7 +83,30 @@ try {
 }
 })
 
-const updateEvent=asyncHandler(async(req, res) =>{})
+const updateEvent=asyncHandler(async(req, res) =>{
+  console.log(req.body);
+ 
+  try {
+    const {id,note,amount,payment,offers,serviceDate,eventServices}=req.body
+    const confirmedEvent = await Event.update({note,amount,payment,offers,serviceDate,eventServices}, {where :{id : id}})
+    .then((event)=>{
+      eventServices.forEach((element) => {
+      
+        console.log(element);
+        EventServices.update({value:element.value}, {where :{id :element.id}}).then((data)=>{
+         
+         }
+
+        )
+    })}
+    
+    )
+    res.send("ok")
+  } catch (error) {
+    
+  }
+
+})
 
 const allEvents = asyncHandler(async(req, res) =>{
  try {
@@ -335,3 +358,10 @@ module.exports = {
   getAllEmployees,
   updateEventConfirm
 };
+
+
+
+
+
+
+

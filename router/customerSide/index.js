@@ -1,10 +1,11 @@
 const express =require('express');
 const { create } = require('../stdioSide/customerManager/tutorial');
+const { getEventCode } = require('../../controller/customerSide');
 const router = express.Router();
 
 
 //customerRequests
-router.post("/customerRequest", );
+router.get("/events/:eventcode",getEventCode );
 
 
 

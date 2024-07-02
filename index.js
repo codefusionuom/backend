@@ -21,6 +21,7 @@ const customerManagerRouter=require("./router/stdioSide/customerManager/index.js
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
 const superAdminRouter = require('./router/stdioSide/superAdmin/index.js');
+const customerRouter = require('./router/customerSide/index.js');
 
 const { notFound, errorHandler } = require('./middleware/errorHandler.js');
 
@@ -28,6 +29,7 @@ app.use("/customerManager",customerManagerRouter)
 app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
 app.use('/superAdmin', superAdminRouter);
+app.use('/customer',customerRouter );
 
 
 // const { notFound, errorHandler } = require('./middleware/errorHandler.js');

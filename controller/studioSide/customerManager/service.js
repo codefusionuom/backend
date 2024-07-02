@@ -172,76 +172,189 @@ exports.getService = asyncHandler(async (req, res) => {
   }
 });
 
+// exports.updateService = asyncHandler(async (req, res) => {
+//   try {
+//     const serviceId = req.params.id;
+//     console.log(serviceId);
+//     const service = await Services.findOne({
+//       where: { id: serviceId },
+//       include: [
+//         {
+//           model: ServiceInputFields,
+//           as: "serviceInputFields",
+//           include: [
+//             {
+//               model: ServiceInputFieldValues,
+//               as: "serviceInputFieldValues",
+//             },
+//           ],
+//         },
+//       ],
+//     });
+//     console.log("in service edit", service);
+//     if (service) {
+//       const {
+//         serviceName,
+//         description,
+//         inputFields,
+//         selectFields,
+//         price,
+//         parentService,
+//       } = req.body;
+
+//       const customerService = {
+//         serviceName,
+//         description,
+//         price,
+//         // parentService,
+//       };
+//       const data = await Services.update(customerService, {
+//         where: { id: serviceId },
+//         returning: true,
+//       });
+
+//       const existingFields = service.serviceInputFields.map(field => field.fieldName);
+//       const fieldsToAdd = inputFields.filter(field => !existingFields.includes(field));
+//       const fieldsToRemove = service.serviceInputFields.filter(field => !inputFields.includes(field.fieldName));
+
+//       // Add new fields to the database
+//       for (const field of fieldsToAdd) {
+//         await ServiceInputFields.create({
+//           fieldName: field,
+//           serviceId: serviceId,
+//           type: 'input' // or 'select' based on your logic
+//         });
+//       }
+
+//       // Remove old fields from the database
+//       for (const field of fieldsToRemove) {
+//         await ServiceInputFields.destroy({
+//           where: { id: field.id }
+//         });
+//       }
+
+//       console.log(data,"edited service table");
+//     }
+
+//     res.status(200).json({ serviceId });
+//   } catch (error) {
+//     res.status(400);
+//     throw new Error(error.message || "can't get Customer");
+//   }
+// });
+
 exports.updateService = asyncHandler(async (req, res) => {
   try {
     const serviceId = req.params.id;
+
+    const { serviceName,
+      description,
+      price,
+      parentService, } = req.body;
     console.log(serviceId);
-    const service = await Services.findOne({
+
+    const customerService = {
+      serviceName,
+      description,
+      price,
+      parentService,
+    };
+    const data = await Services.update(customerService, {
       where: { id: serviceId },
-      include: [
-        {
-          model: ServiceInputFields,
-          as: "serviceInputFields",
-          include: [
-            {
-              model: ServiceInputFieldValues,
-              as: "serviceInputFieldValues",
-            },
-          ],
-        },
-      ],
+      returning: true,
     });
-    console.log("in service edit", service);
-    if (service) {
-      const {
-        serviceName,
-        description,
-        inputFields,
-        selectFields,
-        price,
-        parentService,
-      } = req.body;
 
-      const customerService = {
-        serviceName,
-        description,
-        price,
-        // parentService,
-      };
-      const data = await Services.update(customerService, {
-        where: { id: serviceId },
-        returning: true,
-      });
-     
-      const existingFields = service.serviceInputFields.map(field => field.fieldName);
-      const fieldsToAdd = inputFields.filter(field => !existingFields.includes(field));
-      const fieldsToRemove = service.serviceInputFields.filter(field => !inputFields.includes(field.fieldName));
-  
-      // Add new fields to the database
-      for (const field of fieldsToAdd) {
-        await ServiceInputFields.create({
-          fieldName: field,
-          serviceId: serviceId,
-          type: 'input' // or 'select' based on your logic
-        });
-      }
-  
-      // Remove old fields from the database
-      for (const field of fieldsToRemove) {
-        await ServiceInputFields.destroy({
-          where: { id: field.id }
-        });
-      }
-        
-      console.log(data,"edited service table");
+    if (data) {
+      res.status(200).json({ serviceId });
     }
-
-    res.status(200).json({ serviceId });
   } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Customer");
   }
 });
+
+exports.updateServiceInput = asyncHandler(async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+    const { inputfieldList } = req.body;
+    console.log(inputfieldList, serviceId);
+
+    const promises = inputfieldList.map((element) => {
+      console.log(element);
+      return ServiceInputFields.create({
+        serviceId: serviceId,
+        type: "input",
+        fieldName: element,
+      });
+    });
+
+    await Promise.all(promises).then((data)=>{
+      res.status(200).json({ serviceId });
+    });
+
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
+
+exports.updateServiceOptions = asyncHandler(async (req, res) => {
+  try {
+    const selectId = req.params.id;
+    const { selectoptionList } = req.body;
+    console.log(selectoptionList, selectId);
+
+    const promises = selectoptionList.map((element) => {
+      console.log(element);
+      return ServiceInputFieldValues.create({
+        serviceInputFieldId: selectId,
+        fieldValueName: element,
+      });
+    });
+
+    await Promise.all(promises).then((data)=>{
+      res.status(200).json({ selectId });
+    });
+
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
+
+
+exports.updateServiceSelect = asyncHandler(async (req, res) => {
+  try {
+    const serviceId = req.params.id;
+    const { newselectfields } = req.body;
+    console.log(newselectfields, serviceId);
+
+  newselectfields.map((element) => {
+      // console.log(element);
+        const key = Object.keys(element)[0];
+        const objects = element[key];
+        console.log(key,objects);
+       ServiceInputFields.create({
+        serviceId: serviceId,
+        type: "select",
+        fieldName: key,
+      }).then((data)=>{
+        objects.map((element) => {
+          ServiceInputFieldValues.create({
+            serviceInputFieldId: data.id,
+            fieldValueName: element.name,
+          });
+        })
+      });
+    });
+
+    res.status(200).json("ok");
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
+  }
+});
+
 
 exports.deleteService = asyncHandler(async (req, res) => {
   const serviceId = req.params.id;

@@ -8,7 +8,7 @@ const moment = require("moment");
 const CustomerPayment = db.customerPayments;
 const Customer = db.customers;
 const Events = db.events;
-
+const Services=db.services
 exports.createPayment = asyncHandler(async (req, res) => {
   const {
     description,
@@ -73,8 +73,18 @@ exports.getCustomerPaymentDetails = asyncHandler(async (req, res) => {
   try {
     const data = await CustomerPayment.findOne({
       where: { id: id },
-      include: [Events],
+      include: [
+        {
+          model: Events,
+          include: [
+            {
+              model: Services,
+            },
+          ],
+        },
+      ],
     });
+
     res.status(200).json(data);
   } catch (error) {
     res.status(400);
@@ -82,7 +92,7 @@ exports.getCustomerPaymentDetails = asyncHandler(async (req, res) => {
 }
 })
 
-exports.getSearchPayment=async(req,res)=>{
+exports.getSearchPayment=asyncHandler(async(req,res)=>{
     const query=req.query.search;
     const page = req.query.page;
     let limit=4;
@@ -133,4 +143,20 @@ exports.getSearchPayment=async(req,res)=>{
     throw new Error(error.message || "can't find Customer") 
     }
 
+})
+
+
+exports.paymentByEvent=asyncHandler(async(req,res)=>{
+  const id = req.params.id;
+  console.log(id);
+
+  try {
+    const data = await CustomerPayment.findAndCountAll({
+      where: { eventId: id }
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer");
 }
+})

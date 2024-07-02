@@ -88,8 +88,13 @@ assignedTasks.belongsTo(employees, { foreignKey: 'emplyId' });
 tasks.hasMany(assignedTasks, { foreignKey: 'taskId' });
 employees.hasMany(assignedTasks, { foreignKey: 'emplyId' });
 
+events.hasMany(assignedTasks);
+assignedTasks.belongsTo(events);
+
 events.hasMany(customerPayments);
 customerPayments.belongsTo(events);
+
+
 
 // eventRequests.hasMany(customerPayments);
 // customerPayments.belongsTo(eventRequests);
