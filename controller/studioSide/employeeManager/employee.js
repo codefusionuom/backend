@@ -7,7 +7,7 @@ const Employee = db.employees;
 
 
 exports.createEmployee = asyncHandler(async (req, res) => {
-    const { empId, empName, empType, empSalary, empAdd, empDepartment, empNumber } = req.body
+    const { empId, empName, empType, empSalary, empAdd, empDepartment, empNumber , empEmail ,empPassword} = req.body
     const [emp, created] = await Employee.findOrCreate({
         where: { empNumber: empNumber },
         defaults: {
@@ -18,6 +18,8 @@ exports.createEmployee = asyncHandler(async (req, res) => {
             empDepartment: empDepartment,
             empNumber: empNumber,
             empId: empId,
+            empEmail : empEmail,
+            empPassword :empPassword
         }
     });
     
