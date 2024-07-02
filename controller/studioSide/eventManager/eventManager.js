@@ -2,12 +2,17 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 // const Event = require("../../../model/eventManager/event.model");
 const Event = db.events;
+
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
 const Customer = db.customers;
 const Employee = db.employee;
+
 const EventServices = db.eventServices;
+
+const Service = db.services;
+
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
   try {
@@ -110,7 +115,12 @@ const updateEvent=asyncHandler(async(req, res) =>{
 
 const allEvents = asyncHandler(async(req, res) =>{
  try {
-   const events = await Event.findAll( { include: [Customer]});
+   const events = await Event.findAll( { 
+    include: [ {model :Customer} ,{model : Service}]
+  }
+
+   );
+  //  include: [{ model: Employee }, { model: Task }],
    if(!events) res.status(400).json({ message: "Could not get events !"});
  res.status(200).json({events : events})
  } catch (error) {
