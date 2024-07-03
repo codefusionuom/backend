@@ -1,4 +1,4 @@
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db.config");
@@ -28,8 +28,8 @@ const signUpUser = asyncHandler(async (req, res) => {
       return res.status(400).json("User already exists with this email");
     }
 
-    // const salt = await bcrypt.genSalt(12);
-    // const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await Employee.create({
       username,
@@ -64,19 +64,19 @@ const signInUser = asyncHandler(async (req, res) => {
       return res.status(401).json({ message: "User not found..Please sign up and log in!" });
     }
     // console.log(process.env.JWT_SECRET)
-    // const isMatched = await bcrypt.compare(password, user.password);
-    let isMatched = false;
+    // let isMatched = false;
+    const isMatched = await bcrypt.compare(password, user.empPassword);
     if( password == user.empPassword ) isMatched = true
     
     console.log("is match" ,isMatched);
 
 
-    // if (!isMatched) {
-    //   return res.status(401).json({ message: "Incorrect username or password!" });
-    // }
-    if (isMatched != true) {
+    if (!isMatched) {
       return res.status(401).json({ message: "Incorrect username or password!" });
     }
+    // if (isMatched != true) {
+    //   return res.status(401).json({ message: "Incorrect username or password!" });
+    // }
     // const token = generateActivationToken(user.id);
 
     // return res.status(200).json({ token, ...user.toJSON() });
