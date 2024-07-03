@@ -74,49 +74,80 @@ exports.createAdmin = asyncHandler(async (req, res) => {
 exports.deleteAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
   console.log(req.params);
+
   if (!id) {
-    res.status(400).send({ message: "can't remove ,invalid Admin" });
+    res.status(400).send({ message: "Can't remove, invalid Admin" });
     return;
   }
+
   try {
-    const data = await Admin.destroy({
-      where: { empId: id },
-      returning: true,
-    });
-    res.status(200).json(data);
+    // Start a transaction
+    const transaction = await db.sequelize.transaction();
+
+    try {
+      // Delete all privileges related to the admin
+      await Privilege.destroy({
+        where: { empId: id },
+        transaction,
+      });
+
+      // Delete the admin
+      const data = await Admin.destroy({
+        where: { empId: id },
+        transaction,
+      });
+
+      await transaction.commit();
+
+      if (data === 0) {
+        res.status(404).json({ message: 'Admin not found' });
+      } else {
+        res.status(200).json({ message: 'Admin deleted successfully' });
+      }
+    } catch (error) {
+      await transaction.rollback();
+      res.status(400);
+      throw new Error(error.message || "Can't remove Admin");
+    }
   } catch (error) {
     res.status(400);
-    throw new Error(error.message || "can't remove Admin");
+    throw new Error(error.message || "Can't remove Admin");
   }
 });
 
 exports.updateAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
   console.log(id, req.body);
+  const {
+    privileges,
+    empName,
+    empNumber,
+    empAdd,
+    empType,
+    empDepartment,
+    empEmail,
+  } = req.body;
+  console.log('before transaction');
+  const transaction = await db.sequelize.transaction();
 
   try {
-    const admin = await Admin.findByPk(id);
-    // console.log(admin);
-    if (!admin) {
-      return res.status(404).json({ message: 'Admin not found' });
+    await Privilege.destroy({ where: { empId: id }, transaction });
+
+    for (let priv of privileges) {
+      await Privilege.create(
+        {
+          empId: id,
+          privilege: priv.trim(),
+        },
+        { transaction }
+      );
     }
 
-    const { privileges, ...otherData } = req.body;
-    let updatedData = { ...otherData };
+    await transaction.commit();
 
-    if (privileges) {
-      updatedData.privilege = privileges.join(',');
-    }
-
-    // console.log(updatedData);
-
-    const data = await Admin.update(updatedData, {
-      where: { empId: id },
-      returning: true,
-    });
-    // console.log('update admin return value',data);
-    res.status(200).json(data);
+    res.status(200).json({ message: 'Admin updated successfully', privileges });
   } catch (error) {
+    await transaction.rollback();
     res.status(400);
     throw new Error(error.message || "can't update Admin");
   }
@@ -128,7 +159,7 @@ exports.getAdmin = asyncHandler(async (req, res) => {
     //   include: Employee,
     //   attributes: { exclude: ['password'] },
     // });
-    console.log("hiiiiiiiiiiiiiiiiiiiiiiiiii");
+    // console.log('hiiiiiiiiiiiiiiiiiiiiiiiiii');
     // console.log(req.admin.id);
     const data = await Employee.findAll({
       include: [
@@ -139,7 +170,7 @@ exports.getAdmin = asyncHandler(async (req, res) => {
         },
       ],
     });
-    console.log(data);
+    // console.log(data);
     // const privilegesArray = data[0].Privileges.map(
     //   (privilege) => privilege.privilege
     // );
