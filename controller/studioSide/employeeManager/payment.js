@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const { Op, findOrCreate } = require("sequelize");
 const Employee = db.employees;
-const Advance = db.advance;
+const Advance = db.advances;
 
 
 
@@ -12,8 +12,6 @@ exports.createAdvance = asyncHandler(async (req, res) => {
     const advance = await Advance.create({
             empId : empId,
             advanceAmount: advanceAmount,
-            advancePaidAmount: 0,
-            advancePaidStatus: 0
     })
     res.status(200).json(advance);
     

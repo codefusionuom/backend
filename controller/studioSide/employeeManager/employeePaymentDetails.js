@@ -1,12 +1,14 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
+const { Op, findOrCreate, where } = require("sequelize");
 
+const Employee = db.employees;
 const EmployeePaymentDetails = db.employeePaymentDetails;
 
 
 
 exports.createEmployeePaymentDetails = asyncHandler(async (req, res) => {
-    const { id,bank,epfNumber,accoutNumber,overtimeRate,doubleovertimeRate} = req.body
+    const { id,bank,epfNumber,accoutNumber,overtimeRate,empSalary} = req.body
     const [empPaymentDetails, created] = await EmployeePaymentDetails.findOrCreate({
         where: { id: id },
         defaults: {
@@ -14,7 +16,7 @@ exports.createEmployeePaymentDetails = asyncHandler(async (req, res) => {
             epfNumber: epfNumber,
             accountNumber: accoutNumber,
             overtimeRate: overtimeRate,
-            doubleovertimeRate: doubleovertimeRate,
+            empSalary: empSalary,
         }
     });
     
@@ -55,5 +57,51 @@ exports.updateEmployeePaymentDatails = asyncHandler(async (req, res) => {
     } catch (error) {
         res.status(400);
         throw new Error(error.message || "can't update Employee payment details");
+    }
+})
+
+exports.getEmployeeSearchViewPaymentDetails = asyncHandler(async (req, res) => {
+    // const page = req.query.page;
+    const empName = req.query.empName;
+    // const limit = 8;
+    console.log("get Employee",empName);
+    // let offset = limit * (page - 1)
+    try {
+        if(empName){
+            const data = await EmployeePaymentDetails.findAll({
+                // where: {
+                //     empName: { 
+                //       [Op.like]: `%${empName}%`
+                //     }
+                //   },
+                  include: [
+                    {
+                      model: Employee,
+                      where: {
+                        empName: { 
+                          [Op.like]: `%${empName}%`
+                        }
+                      },
+                    }
+                  ],
+
+                order: [['createdAt', 'DESC']]
+            })
+            res.status(200).json(data)
+        }
+        // else{
+        //     const data = await Employee.findAll({
+
+        //         order: [['createdAt', 'DESC']]
+        //     }) 
+        //     console.log(data);
+        //     res.status(200).json(data)
+        // }
+        
+       
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
     }
 })
