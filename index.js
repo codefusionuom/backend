@@ -13,11 +13,13 @@ app.use(bodyParser.json());
 const db = require('./config/db.config.js');
 db.sequelize.sync();
 
-const { createCustomerRequest } = require('./controller/studioSide/customerManager/customerRequest.js');
+
+const { createCustomerRequest, createCustomerRequestOnline } = require('./controller/studioSide/customerManager/customerRequest.js');
 const customerManagerRouter=require("./router/stdioSide/customerManager/index.js");
 const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.js')
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
 const superAdminRouter = require('./router/stdioSide/superAdmin/index.js');
+const customerRouter = require('./router/customerSide/index.js');
 const userRouter = require('./router/userRouter.js');
 
 const { notFound, errorHandler } = require('./middleware/errorHandler.js');
@@ -26,7 +28,14 @@ app.use("/customerManager",customerManagerRouter)
 app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
 app.use('/superAdmin', superAdminRouter);
-app.use('/', userRouter);
+app.use('/customer',customerRouter );
+
+
+// const { notFound, errorHandler } = require('./middleware/errorHandler.js');
+
+
+
+
 
 const server = app.listen(process.env.PORT, () => console.log(`App started on port: ${process.env.PORT}`));
 
@@ -40,10 +49,11 @@ const io = socketIo(server,{
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  socket.on('customerRequest', (req) => {
+  socket.on('customerRequest',async (req) => {
     // console.log('customer request',req);
-    createCustomerRequest(req)
-    io.emit("customerRequest",req)
+    const data=await createCustomerRequestOnline(req)
+    console.log(req,data);
+    io.emit("customerRequest",data)
   })
 });
 

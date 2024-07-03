@@ -9,6 +9,9 @@ module.exports = (sequelize, Sequelize) => {
     empType: {
       type: Sequelize.STRING
     },
+    // empSalary: {
+    //   type: Sequelize.INTEGER
+    // },
     empDepartment: {
       type: Sequelize.STRING
     },
@@ -21,6 +24,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    empPassword: {
+      type: Sequelize.STRING,
+    }
   });
   return employees;
 };

@@ -1,34 +1,38 @@
-const { ENUM } = require("sequelize");
-
 module.exports = (sequelize, Sequelize) => {
-  
-    const events = sequelize.define("events", {
-      eventId: {
-        type: Sequelize.STRING
+  const events = sequelize.define("events", {
+    customerId: {
+      type: Sequelize.INTEGER,
+      references: {
+          model: "customers",
+          key: 'id', // Specify ON UPDATE NO ACTION
+        } 
+    },
+    serviceId: {
+      type: Sequelize.INTEGER,
+      references: {
+        model: "services",
+        key: "id", 
       },
-      serviceType: {
-        type: Sequelize.ENUM,
-        values: ['one day services' , 'wedding photography']
-      },
-      status: {
-        type: Sequelize.ENUM,
-        values: ['Offline', 'Upcoming ','Desertion', 'Done' , 'Active']
-      },
-      date: {
-        // type: Sequelize.STRING,
-        type: Sequelize.DATE,
-        // unique: 'uniqueTag',
-      },
-      customerId: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: "customers", 
-            key: 'id'
-          } 
-      },
-      // eventDetails: {
-
-      // }
-    });
-      return events
-    };
+    },
+    serviceDate: {
+      type: Sequelize.STRING,
+    },
+    note: {
+      type: Sequelize.STRING,
+    },
+    amount: {
+      type: Sequelize.REAL,
+    },
+    offers: {
+      type: Sequelize.REAL,
+    },
+    payment: {
+      type: Sequelize.REAL,
+    },
+    status: {
+      type: Sequelize.ENUM,
+      values: ['pending','Offline', 'Upcoming ','Desertion', 'Done' , 'Active']
+    },
+  });
+  return events;
+};

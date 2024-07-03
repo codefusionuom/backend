@@ -50,7 +50,7 @@ router.get('/admin/:id',
    getAdminById);
 
 //department
-router.get('/departmrnt/:page', getDepartment);
+router.get('/department', getDepartment);
 router.put('/department/:id', updateDepartment);
 router.post('/department', createDepartment);
 router.delete('/departmentd/:id', deleteDepartment);

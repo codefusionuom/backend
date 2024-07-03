@@ -2,11 +2,16 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 // const Event = require("../../../model/eventManager/event.model");
 const Event = db.events;
+
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
 let existingEvent;
 const Customer = db.customers;
 const Employee = db.employee;
+
+const EventServices = db.eventServices;
+
+const Service = db.services;
 
 const createEvent = asyncHandler(async (req, res) => {
   console.log("yyyyyyyyyyyyyyyy");
@@ -71,30 +76,51 @@ const createEvent = asyncHandler(async (req, res) => {
   }
 });
 
-const updateEvent =  asyncHandler(async( req ,res ) => {
+const updateEventConfirm =  asyncHandler(async( req ,res ) => {
 try {
-  console.log("llllllllllllllllllllllllll");
-    const { serviceType , status , date , customerId } = req.body;
-    const eventId = req.params.eventId;
-    console.log("fgggggggggggggggggg");
-  console.log(eventId);
-    const packedtoUpdate = {}
-  
-    if(serviceType) packedtoUpdate.serviceType = serviceType;
-    if(status) packedtoUpdate.status = status;
-    if(date) packedtoUpdate.date = date;
-    if(customerId) packedtoUpdate.customerId = customerId;
-  
-    const upEvent = await Event.update(packedtoUpdate , {where :{eventId : eventId}})
-    res.send(upEvent)
+  const id = req.params.id;
+    const {  status } = req.body;
+    console.log(id,status);
+    const confirmedEvent = await Event.update({status:status} , {where :{id : id}})
+    res.send(confirmedEvent)
 } catch (error) {
   res.status(400).json({ message: error.message });
 }
 })
 
+const updateEvent=asyncHandler(async(req, res) =>{
+  console.log(req.body);
+ 
+  try {
+    const {id,note,amount,payment,offers,serviceDate,eventServices}=req.body
+    const confirmedEvent = await Event.update({note,amount,payment,offers,serviceDate,eventServices}, {where :{id : id}})
+    .then((event)=>{
+      eventServices.forEach((element) => {
+      
+        console.log(element);
+        EventServices.update({value:element.value}, {where :{id :element.id}}).then((data)=>{
+         
+         }
+
+        )
+    })}
+    
+    )
+    res.send("ok")
+  } catch (error) {
+    
+  }
+
+})
+
 const allEvents = asyncHandler(async(req, res) =>{
  try {
-   const events = await Event.findAll( { include: [Customer]});
+   const events = await Event.findAll( { 
+    include: [ {model :Customer} ,{model : Service}]
+  }
+
+   );
+  //  include: [{ model: Employee }, { model: Task }],
    if(!events) res.status(400).json({ message: "Could not get events !"});
  res.status(200).json({events : events})
  } catch (error) {
@@ -323,6 +349,59 @@ const getAllEmployees = asyncHandler(async(req, res) =>{
   }
 });
 
+const getEmpAllowanceandSearch = asyncHandler(async (req, res) => {
+  const page = req.query.page;
+  const empName = req.query.empName;
+  const limit = 8;
+  console.log("get Employee",page,empName,limit);
+  let offset = limit * (page - 1)
+  try {
+      if(empName){
+          const data = await Event.findAndCountAll({
+              // where: {
+              //     empName: { 
+              //       [Op.like]: %${empName}%
+              //     }
+              //   },
+              include: [
+                  { 
+                      model: paymentAllowanceDeduction,  
+                      attributes: ['allowanceDeduction','allowanceDeductionName'],
+                   },{ 
+                      model: Customer,  
+                      attributes: ['empName'], 
+                      where: {
+                          empName: { 
+                            [Op.like]: `%${empName}%`
+                          }
+                        },
+                  }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          })
+          res.status(200).json(data)
+      }
+      else{
+          const data = await empallowance.findAndCountAll({
+              include: [{ model: paymentAllowanceDeduction,  attributes: ['allowanceDeduction','allowanceDeductionName'], },{ model: Employee,  attributes: ['empName'], }],
+              limit: limit,
+              offset: offset,
+              order: [['createdAt', 'DESC']]
+          }) 
+          console.log(data);
+          res.status(200).json(data)
+      }
+      
+     
+
+  } catch (error) {
+      res.status(400);
+      throw new Error(error.message || "can't get allowance/deductions");
+  }
+})
+
+
 
  const getAllEventTypes = asyncHandler(async(req, res) =>{
   let eventTypes = [];
@@ -339,5 +418,13 @@ module.exports = {
   getSelectedDayEvents,
   getCustomer,
   getEvent,
-  getAllEmployees
+  getAllEmployees,
+  updateEventConfirm
 };
+
+
+
+
+
+
+
