@@ -193,8 +193,8 @@ const advances = require("../model/employeeManager/advance.model")(sequelize,Seq
 employees.hasMany(attendance, { foreignKey: 'id' });
 attendance.belongsTo(employees, { foreignKey: 'id' });
 
-employees.hasMany(advance, {foreignKey: 'empId'});
-advance.belongsTo(employees, {foreignKey: 'id'});
+employees.hasMany(advances, {foreignKey: 'empId'});
+advances  .belongsTo(employees, {foreignKey: 'id'});
 
 ///1:1
 // employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
@@ -231,7 +231,7 @@ db.paymentAllowanceDeduction = paymentAllowanceDeduction;
 db.employees = employees;
 db.employeePaymentDetails = employeePaymentDetails;
 db.attendance = attendance;
-db.advance = advance;
+db.advances = advances;
 
 db.admin = admin;
 db.users=users
