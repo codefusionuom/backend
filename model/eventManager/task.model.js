@@ -25,7 +25,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       status: {
         type: Sequelize.ENUM,
-        values: ['Active', 'Upcoming ','Desertion', 'Done']
+        values: ['Upcoming','Paused', 'Done' , "Rejected"]
       },
       description: {
         type: Sequelize.STRING
