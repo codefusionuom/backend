@@ -3,14 +3,12 @@ const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-// const database=require("./config/mssql.js")
 const socketIo = require('socket.io');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
-// app.use(cookieParser());
 
 const db = require('./config/db.config.js');
 db.sequelize.sync();
@@ -22,6 +20,7 @@ const eventMangerRouter = require('./router/stdioSide/eventManager/eventManager.
 const employeeManagerRouter = require('./router/stdioSide/employeeManager/employee.js')
 const superAdminRouter = require('./router/stdioSide/superAdmin/index.js');
 const customerRouter = require('./router/customerSide/index.js');
+const userRouter = require('./router/userRouter.js');
 
 const { notFound, errorHandler } = require('./middleware/errorHandler.js');
 
