@@ -214,27 +214,79 @@ exports.getAdmin = asyncHandler(async (req, res) => {
   }
 });
 
+// exports.getAdminById = asyncHandler(async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     // console.log('===================',id);
+//     if (!id) {
+//       res.status(400).send({ message: 'admin not found' });
+//       return;
+//     }
+//     const data = await Admin.findByPk(id, {
+//       include: Employee,
+//       attributes: { exclude: ['password'] },
+//     });
+//     // // console.log(data);
+//     // console.log('===================================================',data);
+//     //   const newData = {
+//     //     ...data.toJSON(),
+//     //     privilege:privilege.split(',')}
+//     // console.log('===================================================', newData);
+//     res.status(200).json(data);
+//   } catch (error) {
+//     res.status(400);
+//     throw new Error(error.message || "can't get Admin");
+//   }
+// });
+
 exports.getAdminById = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    // console.log('===================',id);
+
     if (!id) {
-      res.status(400).send({ message: 'admin not found' });
-      return;
+      return res.status(400).send({ message: 'Admin ID is required' });
     }
-    const data = await Admin.findByPk(id, {
-      include: Employee,
-      attributes: { exclude: ['password'] },
-    });
-    // // console.log(data);
-    // console.log('===================================================',data);
-    //   const newData = {
-    //     ...data.toJSON(),
-    //     privilege:privilege.split(',')}
-    // console.log('===================================================', newData);
-    res.status(200).json(data);
+
+     const data = await Employee.findByPk(id, {
+       include: [
+         {
+           model: Privilege,
+           as: 'Privileges',
+           attributes: ['privilege'],
+         },
+       ],
+     });
+
+     console.log("data",data);
+
+    const employeeData = data.toJSON();
+
+    console.log('employeedata', employeeData);
+
+    // Extract privileges into an array
+    const privilegesArray = employeeData.Privileges.map(
+      (priv) => priv.privilege
+    );
+
+    console.log('privilage array',privilegesArray);
+
+    // Construct the response object
+    const responseData = {
+      id: employeeData.id,
+      empName: employeeData.empName,
+      empAdd: employeeData.empAdd,
+      empType: employeeData.empType,
+      empDepartment: employeeData.empDepartment,
+      empNumber: employeeData.empNumber,
+      empEmail: employeeData.empEmail,
+      privileges: privilegesArray,
+    };
+
+    console.log('response data',responseData);
+
+    res.status(200).json(responseData);
   } catch (error) {
     res.status(400);
-    throw new Error(error.message || "can't get Admin");
+    throw new Error(error.message || "Can't get Admin");
   }
 });

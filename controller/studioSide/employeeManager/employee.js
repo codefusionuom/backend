@@ -108,7 +108,6 @@ exports.updateEmployee = asyncHandler(async (req, res) => {
 
         const data = await Employee.update(req.body, {
             where: { id: id },
-            // returning: true,
         })
         res.status(200).json(data)
     } catch (error) {

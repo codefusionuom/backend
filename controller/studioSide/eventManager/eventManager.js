@@ -170,42 +170,43 @@ const getOnedayEvents = asyncHandler(async (req, res) => {
     // console.log(datetime);
 });
 
-const getTodayEvents =  asyncHandler(async(req, res) =>{
+const getTodayEvents = asyncHandler(async (req, res) => {
   try {
-    var todayWithOnedayOff = new Date();
-    console.log("todayWithOnedayOff : " , todayWithOnedayOff);
-    const today =  new Date( todayWithOnedayOff.getTime() + Math.abs(todayWithOnedayOff.getTimezoneOffset()*60000) );
-    
-  console.log("today  :" , today);
-  const startOfDay = new Date(today);
-  startOfDay.setHours(0, 0, 0, 0);
-  console.log("startOfDay :" , startOfDay);
-  // console.log("start Of Day Fun:" , setToStartOfDay(today));
-  // const todayStart = moment().startOf('day').toISOString();
+    // Get current date and time
+    const now = new Date();
 
-  const todayBegin = new Date(setToStartOfDay(today));
+    // Set the start of today in the server's local time zone
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
 
-  
-  console.log("0.0.0. :", todayBegin); // Outputs: "2024-03-13T00:00:00.000Z"
+    // Set the end of today in the server's local time zone
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
 
-  const endOfDay = new Date(today);
-  endOfDay.setUTCHours(23, 59, 59, 999);
-  console.log("endOfDay :" , endOfDay);
+    // Convert both to UTC for database query
+    const todayBegin = new Date(startOfDay.toISOString());
+    const todayEnd = new Date(endOfDay.toISOString());
 
+    console.log('todayBegin:', todayBegin); // Should log 2024-07-03T00:00:00.000Z
+    console.log('todayEnd:', todayEnd); // Should log 2024-07-03T23:59:59.999Z
 
-  
-    await Event.findAll({
+    // Fetch events from the database
+    const events = await Event.findAll({
       where: {
-        date: {
-          [Op.between] : [todayBegin , endOfDay ]
-        }
-      }
-    }).then((result) => res.status(200).json({ todayEvents: result }))
-    .catch((error) => res.status(404).json({ error: error }));
+        serviceDate: {
+          [Op.between]: [todayBegin, todayEnd],
+        },
+      },
+    });
+
+    console.log('result 88888888888888888888888888888888 :', events);
+    return res.status(200).json({ todayEvents: events });
   } catch (error) {
-    res.status(404).json({ error: error });
+    console.error("Error fetching today's events:", error);
+    return res.status(500).json({ error: error.message });
   }
-})
+});
+
 
 const getSelectedDayEvents =  asyncHandler(async(req, res) =>{
   try {
