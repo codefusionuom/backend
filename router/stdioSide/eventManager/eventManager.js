@@ -5,6 +5,7 @@ const db = require("../../../config/db.config");
 const { createTask, getEventCategories, getTasksByEmployeeId, getAllTasks, getTaskById, getEmployeesByTaskId, updateTask1, updateTask, searchTasksByTaskname, getSelectedDayTasks, deleteTask } = require('../../../controller/studioSide/eventManager/task');
 const { createAssignedTask } = require('../../../controller/studioSide/eventManager/assignedTasks');
 const { signInUser } = require('../../../model/eventManager/userCtrl');
+const { getEmployeesandSearch } = require('../../../controller/studioSide/eventManager/mobileaApp');
 //event Manager
 router.get("/Filter/Between",filterEventsBetween);
 router.get("/getOnedayEvents", getOnedayEvents);
@@ -43,7 +44,9 @@ router.post("/task/deleteTask", deleteTask);
 router.get("/employee-asignedTasks", getTasksByEmployeeId);
 
 
+//-----------Other routes---------------
 router.post("/employee/logIn", signInUser);
+router.get("/employee/EmployeesandSearch", getEmployeesandSearch);
 
 
 

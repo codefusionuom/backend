@@ -4,7 +4,7 @@ const { createEmployeePaymentDetails, getEmployeePaymentDetailsByid, updateEmplo
 const { createAttendance, getAttendance, getCheckInTotal, getCheckOutTotal } = require('../../../controller/studioSide/employeeManager/attendance');
 const { createAllowanceDeduction, getAllowance, deleteAllowance } = require('../../../controller/studioSide/employeeManager/allowanceDeduction');
 // const { createAdvance, getAdvance, getAdvanceByid, updateAdvance,  } = require("../../../controller/studioSide/employeeManager/payment")
-const { createAdvance, getAdvanceForEmployee, getRejectAdvance} = require('../../../controller/studioSide/employeeManager/advance')
+const { createAdvance, getAdvanceForEmployee, getRejectAdvance} = require('../../../controller/studioSide/employeeManager/advance');
 const router = express.Router();
 
 //// Employee

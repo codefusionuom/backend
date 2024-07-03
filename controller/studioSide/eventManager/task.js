@@ -107,7 +107,7 @@ const createTask = asyncHandler(async (req, res) => {
 
     res.status(200).json({ message: "Task created successfully!" });
   } catch (error) {
-    console.error("Error in createTask:", error.message);
+    console.error("Error in createTask:", error);
     res
       .status(500)
       .json({ message: "Could not create the Task!", error: error.message });
@@ -197,12 +197,19 @@ const getEmployeesByTaskId = asyncHandler(async (req, res) => {
 });
 
 const getAllTasks = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page);
+  const limit = 8;
+  console.log("get Customer",page,limit);
+  let offset = limit * (page - 1)
   try {
-    let tasks = await Task.findAll();
+    let tasks = await Task.findAll({
+      limit: limit,
+      offset: offset,
+    });
     if (!tasks) return res.status(400).json({ error: "No tasks found" });
     res.status(200).json({ tasks: tasks });
   } catch (error) {
-    console.log(first);
+    console.log(error);
   }
 });
 // app.get('/api/event-enums', (req, res) => {

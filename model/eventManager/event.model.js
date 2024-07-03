@@ -29,9 +29,10 @@ module.exports = (sequelize, Sequelize) => {
     payment: {
       type: Sequelize.REAL,
     },
+    //
     status: {
       type: Sequelize.ENUM,
-      values: ['pending','Offline', 'Upcoming ','Desertion', 'Done' , 'Active']
+      values: ['Pending', 'Upcoming', 'Done' , 'Paused' ,'Rejected'],
     },
   });
   return events;
