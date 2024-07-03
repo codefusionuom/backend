@@ -3,42 +3,55 @@ const db = require("../../../config/db.config");
 const { Op, findOrCreate, where } = require("sequelize");
 const Employee = db.employees;
 const Advance = db.advances;
+const PaymentDetails = db.employeePaymentDetails
 
 
 
 exports.createAdvance = asyncHandler(async (req, res) => {
 
     try {
-      const {  advanceAmount, description ,advancerequest } = req.body;
-      // let advancerequest = req.query.advancerequest;
-      const { empId } = req.query;
-      const reject = false;
-      console.log("empId   " , empId);
-      console.log("advanceAmount   " ,advanceAmount);
-      console.log("advancerequest   " ,advancerequest);
-      console.log("description   " ,description);
-      if (!advancerequest) {
-          advancerequest=0;
-      }
-      const formatDate = (date) => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-          return `${year}-${month}`;
-      };
-  
-      const currentDate = new Date();
-      const formattedDate = formatDate(currentDate);
-        
-      
-      const advance = await Advance.create({
-              empId : empId,
-              advanceAmount: advanceAmount,
-              description: description,
-              monthtaken: formattedDate,
-              advancerequest: advancerequest,
-              reject: reject
-      })
-      res.status(200).json(advance);
+        const { empId } = req.query;
+        const {  advanceAmount, description } = req.body;
+        let { advancerequest } = req.body
+        const emplsalary = await PaymentDetails.findOne({
+            where: {
+                id: empId
+            },
+            attributes: ['empSalary']
+        });
+        const salary = emplsalary.empSalary
+        const newSalary = salary/3
+        console.log(salary);
+        if (advanceAmount<newSalary) {
+
+                    const reject = false;
+            if (!advancerequest) {
+                advancerequest=0;
+            }
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+                return `${year}-${month}`;
+            };
+            const currentDate = new Date();
+            const formattedDate = formatDate(currentDate);
+            const advance = await Advance.create({
+                    empId : empId,
+                    advanceAmount: advanceAmount,
+                    description: description,
+                    monthtaken: formattedDate,
+                    advancerequest: advancerequest,
+                    reject: reject
+            })
+            res.status(200).json(advance);
+
+
+        } else {
+
+            res.status(500).json({ error: "Advance cannot exceed 1/3 salary" });
+
+        }
+
     } catch (error) {
      console.log("eroor heeeeeeee" , error)
     }
@@ -62,6 +75,9 @@ exports.getAdvance = asyncHandler(async (req, res) => {
               attributes: ['empName'],
             }
           ],
+          limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
 
         });
 
@@ -89,7 +105,12 @@ exports.getRejectAdvance = asyncHandler(async (req, res) => {
             where: 
         {
             reject: true,
-        }
+        },include: [
+            {
+              model: Employee,
+              attributes: ['empName'],
+            }
+          ],
         },{
             //   include: [{ model: Employee, attributes: ['empName'], }],
             // limit: 10,
@@ -112,7 +133,7 @@ exports.getRejectAdvance = asyncHandler(async (req, res) => {
 });
 
 
-exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
+exports.getEmployeesandSearchForAdvance = asyncHandler(async (req, res) => {
     const page = req.query.page;
     const empName = req.query.empName;
     const limit = 8;
@@ -126,8 +147,18 @@ exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
                       [Op.like]: `%${empName}%`
                     }
                   },
-                limit: limit,
-                offset: offset,
+                  include: [
+                    {
+                      model: PaymentDetails,
+                    //   where: {
+                    //     empSalary: {
+                    //         [Op.not]: null,
+                    //     }
+                    //   }
+                    }
+                  ],
+                // limit: limit,
+                // offset: offset,
                 order: [['createdAt', 'DESC']]
             })
             res.status(200).json(data)
