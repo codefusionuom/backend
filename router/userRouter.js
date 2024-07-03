@@ -8,6 +8,7 @@ const {
 } = require('../controller/userController');
 
 router.post('/foggotPassword', user_forgotPassword);
+router.post('/foggotPassword/reset', user_resetPassword);
 
 module.exports = router;
 

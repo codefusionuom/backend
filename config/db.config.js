@@ -29,6 +29,7 @@ db.sequelize = sequelize;
 
 const admin = require('../model/superAdmin/admin.model')(sequelize, Sequelize);
 const users = require('../model/user.model')(sequelize, Sequelize);
+const privileges = require('../model/superAdmin/privilege.model')(sequelize, Sequelize);
 
 const customers = require('../model/customer/customer.model')(
   sequelize,
@@ -208,12 +209,18 @@ admin.belongsTo(employees, {
   foreignKey: 'empId',
 });
 
-employees.hasOne(users, {
+admin.hasOne(users, {
   foreignKey: 'empId',
 });
-users.belongsTo(employees, {
+users.belongsTo(admin, {
   foreignKey: 'empId',
 });
+
+employees.hasMany(privileges, { foreignKey: 'empId' });
+privileges.belongsTo(employees, { foreignKey: 'empId' });
+
+// admin.belongsToMany(users, { through: adminPrivilege });
+// users.belongsToMany(admin, { through: adminPrivilege });  
 
 db.paymentAllowanceDeduction = paymentAllowanceDeduction;
 db.employees = employees;
@@ -223,5 +230,6 @@ db.advance = advance;
 
 db.admin = admin;
 db.users=users
+db.privileges=privileges
 
 module.exports = db;

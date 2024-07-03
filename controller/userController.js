@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 // } = require('../utility/joi');
 // const AppError = require('../utils/error');
 const { check, validationResult } = require('express-validator');
+const { where } = require('sequelize');
 
 // const User = db.user;
 const Admin = db.admin;
@@ -46,7 +47,7 @@ exports.user_forgotPassword = asyncHandler(async (req, res, next) => {
 
   const otp = Math.floor(1000 + Math.random() * 9000);
   const otpExpire = new Date();
-  otpExpire.setMinutes(otpExpire.getMinutes() + 1);
+  otpExpire.setMinutes(otpExpire.getMinutes() + 100);
 
    const [user, created] = await User.findOrCreate({
      where: { empId },
@@ -57,7 +58,19 @@ exports.user_forgotPassword = asyncHandler(async (req, res, next) => {
      },
    });
 
-  //  console.log(user);
+      // console.log(user);
+      // console.log(created);
+
+  if (!created) {
+    // If the user already exists, update the OTP and otpExpire
+    const existuser = await user.update({
+      otp,
+      otpExpire,
+    });
+    // console.log(existuser);
+  }
+
+   
   //  console.log(created);
 
   const transporter = nodemailer.createTransport({
@@ -89,27 +102,70 @@ exports.user_forgotPassword = asyncHandler(async (req, res, next) => {
 
 // Reset Password
 exports.user_resetPassword = asyncHandler(async (req, res, next) => {
-  const { password, confirmPassword, otp } = req.body;
+  const { password, otp } = req.body;
   // if (isEmpty(req.body)) return next(new AppError('Form data not found', 400));
 
-  const { error } = RESET_PASSWORD_MODEL.validate(req.body);
-  if (error) return next(new AppError(error.details[0].message, 400));
+  // const { error } = RESET_PASSWORD_MODEL.validate(req.body);
+  // if (error) return next(new AppError(error.details[0].message, 400));
 
-  if (password !== confirmPassword)
-    return next(new AppError('Passwords do not match', 400));
+  // if (password !== confirmPassword) {
+  //   return res.status(400).send({ message: 'Passwords does not match' });
+  // }
+
+  const currentTime = new Date();
+  // console.log('Current Time:', currentTime);
+  // console.log('OTP:', otp);
 
   const user = await User.findOne({
     where: { otp, otpExpire: { [db.Sequelize.Op.gt]: new Date() } },
   });
-  if (!user) return next(new AppError('Invalid or expired OTP', 400));
+  // console.log(user);
+  if (!user) return res.status(400).send({ message: 'Invalid or expired OTP' });
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+    // Start a transaction
+    await db.sequelize.transaction(async (transaction) => {
+    const updatedRows = await User.findOne(
+      { where: { otp } },
+      { transaction }
+    );
+    // const [updatedRows] = await User.update(
+    //   { otp: null, otpExpire: null },
+    //   { where: { otp } },
+    //   // { transaction }
+    // );
 
-  await User.update(
-    { password: hashedPassword, otp: null, otpExpire: null },
-    { where: { otp } }
-  );
+    console.log('got user', updatedRows);
 
-  res.json({ data: 'Password reset successful' });
+    if (updatedRows === 0) {
+      return res.status(400).send({ message: 'failed to update password' });
+    }
+    console.log('after check exists');
+
+
+
+    empId = updatedRows.empId;
+    if (!empId || !password) {
+      return res.status(400).send({ message: 'failed to update password' });
+    }
+    console.log('after check coorect data to update');
+
+    console.log('data to update', empId, hashedPassword);
+
+    const admin = await Admin.update(
+      { password: hashedPassword },
+      { where: {empId} },
+      { transaction }
+    );
+
+    console.log(admin);
+
+    res.json({ data: 'Password reset successful' });
+    })
+  } catch (error) {
+    return res.status(500).send({ message: 'Error occured while updating password',error });
+  }
 });
