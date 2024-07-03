@@ -3,12 +3,13 @@ const router = express.Router();
 const { check } = require('express-validator');
 
 const { verifyAuth } = require('../../../middleware/auth');
+const authorize = require('../../../middleware/authorize');
 const {
   getAdmin,
   updateAdmin,
   createAdmin,
   deleteAdmin,
-  getAdminByid,
+  getAdminById
 } = require('../../../controller/studioSide/superAdmin/admin');
 const { getCurruntAdmin, login } = require('../../../controller/auth');
 const {
@@ -20,25 +21,33 @@ const {
 } = require('../../../controller/studioSide/superAdmin/department');
 
 // admin
-//register
-router.post('/admin', createAdmin);
 
 //auth
 router.get('/admin/auth', verifyAuth, getCurruntAdmin);
 router.post(
   '/admin/auth',
   [
-    check('username', 'username is required').exists(),
+    check('email', 'Enter Valid Email required').exists().isEmail(),
     check('password', 'Password is required').exists(),
   ],
   login
 );
 
-router.get('/admin/:page', getAdmin);
-router.put('/admin/:id', updateAdmin);
-router.delete('/admin/:id', deleteAdmin);
-router.get('/adminId/:id', getAdminByid);
-router.get('/admin/?search');
+router.post('/admin',
+  //  authorize(['super_admin']), 
+   createAdmin);
+router.get('/admin',
+  //  authorize(['super_admin']), 
+   getAdmin);
+router.put('/admin/:id',
+  //  authorize(['super_admin']), 
+   updateAdmin);
+router.delete('/admin/:id',
+  //  authorize(['super_admin']),
+    deleteAdmin);
+router.get('/admin/:id', 
+  // authorize(['super_admin']),
+   getAdminById);
 
 //department
 router.get('/department', getDepartment);

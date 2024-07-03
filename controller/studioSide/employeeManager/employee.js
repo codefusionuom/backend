@@ -36,6 +36,7 @@ exports.createEmployee = asyncHandler(async (req, res) => {
 
 
 exports.getEmployees = asyncHandler(async (req, res) => {
+    console.log("-------------------------------enter to emp");
     // const page = req.params.page;
     // let limit = 4;
     // let offset = limit * (page - 1)
@@ -63,7 +64,7 @@ exports.getEmployees = asyncHandler(async (req, res) => {
 
 
 exports.getEmployeeByid = asyncHandler(async (req, res) => { 
-    const { id } = req.params; // Assuming you're passing id as a route parameter
+    const { id } = req.params;
     const employee = await Employee.findByPk(id);
     if (employee === null) {
         console.log('Employee not found!');
@@ -88,6 +89,35 @@ exports.updateEmployee = asyncHandler(async (req, res) => {
     } catch (error) {
         res.status(400);
         throw new Error(error.message || "can't update Employee");
+    }
+})
+
+exports.getEmployeeSearch = asyncHandler(async (req, res) => {
+    const empName = req.query.empName;
+    // console.log("+++++++++++++++++++++++++++++++++get Employee",empName);
+    try {
+        if(empName){
+            const data = await Employee.findAll({
+                where: {
+                    empName: { 
+                      [Op.like]: `%${empName}%`
+                    }
+                  },
+                order: [['createdAt', 'DESC']]
+            })
+            // console.log(data);
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Employee.findAll({
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
+        }
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
     }
 })
 

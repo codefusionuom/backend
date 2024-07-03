@@ -1,5 +1,5 @@
 const express =require('express');
-const { createEmployee, getEmployees, getEmployeeByid, updateEmployee, deleteEmplloyee, deleteEmployee, getEmployeesandSearch } = require('../../../controller/studioSide/employeeManager/employee');
+const { createEmployee, getEmployees, getEmployeeByid, updateEmployee, deleteEmplloyee, deleteEmployee,getEmployeeSearch,getEmployeesandSearch } = require('../../../controller/studioSide/employeeManager/employee');
 const { createEmployeePaymentDetails, getEmployeePaymentDetailsByid, updateEmployeePaymentDatails } = require('../../../controller/studioSide/employeeManager/employeePaymentDetails');
 const { createAttendance, getAttendance, getCheckInTotal, getCheckOutTotal } = require('../../../controller/studioSide/employeeManager/attendance');
 const { createAllowanceDeduction, getAllowance, deleteAllowance } = require('../../../controller/studioSide/employeeManager/allowanceDeduction');
@@ -16,6 +16,7 @@ router.put("/updateEmployee/:id", updateEmployee);
 router.delete("/deleteEmployee/:id",deleteEmplloyee);
 router.get("/getEmployeesandSearch", getEmployeesandSearch);
 // router.delete("/deleteEmployee/:id",deleteEmployee);
+router.get('/getEmployeeSearch/', getEmployeeSearch);
 
 ////// Payment
 
