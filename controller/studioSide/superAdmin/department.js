@@ -1,21 +1,19 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const Departments = db.departments;
+const Employees=db.employees
 
 exports.createDepartment = asyncHandler(async (req, res) => {
   const {
-    departmentId,
     departmentName,
-    departmentHead,
-    description,
-    departmentEmp,
-    departmentItem,
-    departmentTask,
+    departmentHeadId,
+    departmentHeadName,
+    description
   } = req.body;
 
-  if (departmentId) {
+  if (departmentName) {
     const oldDepartment = await Departments.findOne({
-      where: { departmentId: departmentId },
+      where: { departmentName: departmentName },
     });
     if (oldDepartment) {
       console.log(oldDepartment);
@@ -29,13 +27,10 @@ exports.createDepartment = asyncHandler(async (req, res) => {
 
   try {
     const department = {
-      departmentId,
       departmentName,
-      departmentHead,
-      description,
-      departmentEmp,
-      departmentItem,
-      departmentTask,
+      departmentHeadId,
+      departmentHeadName,
+      description
     };
     console.log(department);
     const data = await Departments.create(department);
@@ -56,7 +51,6 @@ exports.deleteDepartment = asyncHandler(async (req, res) => {
   }
   try {
     const data = await Departments.destroy({
-      where: { departmentId: id },
       where: { id: id },
       returning: true,
     });
@@ -83,6 +77,8 @@ exports.updateDepartment = asyncHandler(async (req, res) => {
 });
 
 exports.getDepartment = asyncHandler(async (req, res) => {
+
+ 
   try {
     const data = await Departments.findAndCountAll();
     res.status(200).json(data);
@@ -95,7 +91,9 @@ exports.getDepartment = asyncHandler(async (req, res) => {
 exports.getDepartmentByid = asyncHandler(async (req, res) => {
   const { id } = req.params; 
   try {
-    const data = await Departments.findByPk(id);
+    const data = await Departments.findOne({
+      where: { id: id }
+    });
     res.status(200).json(data);
   } catch (error) {
     res.status(400);

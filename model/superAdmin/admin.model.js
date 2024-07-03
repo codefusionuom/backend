@@ -1,29 +1,18 @@
 module.exports = (sequelize, Sequelize) => {
   const Admin = sequelize.define('Admin', {
-    employeeName: {
-      type: Sequelize.STRING,
-    },
-    employeeId: {
-      type: Sequelize.STRING,
-      unique: true,
-    },
-    address: {
-      type: Sequelize.STRING,
-    },
-    telephone: {
+    empId: {
       type: Sequelize.INTEGER,
-    },
-    privileges: {
-      type: Sequelize.STRING,
+      primaryKey: true,
+      references: {
+        model: 'employees',
+        key: 'id',
+      },
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false, // Password is required
-    },
-    username: {
-      type: Sequelize.STRING,
-      allowNull: false, // username is required
+      allowNull: false,
     },
   });
   return Admin;
 };
+

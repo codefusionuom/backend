@@ -3,7 +3,7 @@ const db = require("../../../config/db.config");
 const { Op } = require("sequelize");
 const Customer = db.customers;
 const Event = db.events;
-
+const Services=db.services
 
 exports.createCustomers = asyncHandler(async (req, res) => {
 console.log("hello");
@@ -20,7 +20,7 @@ console.log("hello");
         console.log(oldCustomer,"hello");
     }
     else {
-        res.status(400).send({ message: "Customer required mobilephone or email" });
+        res.status(400).send({ message: "Customer required mobilephone" });
         return
     }
     console.log("middle");
@@ -78,6 +78,7 @@ exports.updateCustomer = asyncHandler(async (req, res) => {
         })
         res.status(200).json(data)
     } catch (error) {
+        console.log(error);
         res.status(400);
         throw new Error(error.message || "can't update Customer");
     }
@@ -152,12 +153,14 @@ exports.getSearchCustomerEvents=asyncHandler(async(req,res)=>{
     const mobilePhone = req.params.mobilePhone;
     try {
         const data = await Event.findAll({
-            attributes: ['id','serviceType','date'],
             include: [
               {
                 model: Customer,
-                attributes: ['id','firstname', 'lastname'],
+                attributes: ['id','firstname', 'lastname','mobilePhone'],
                 where: {mobilePhone: mobilePhone }
+              },
+              {
+                model: Services,
               }
             ],
             order: [['createdAt', 'DESC']]

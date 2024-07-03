@@ -15,6 +15,7 @@ router.get("/getEmployees", getEmployees);
 router.get("/getEmployeeByid/:id", getEmployeeByid);
 router.put("/updateEmployee/:id", updateEmployee);
 router.delete("/deleteEmployee/:id",deleteEmplloyee);
+router.get("/getEmployeesandSearch", getEmployeesandSearch);
 // router.delete("/deleteEmployee/:id",deleteEmployee);
 router.get("/getEmployeesandSearch", getEmployeesandSearch);
 router.get("/getEmployeeSearch", getEmployeeSearch);

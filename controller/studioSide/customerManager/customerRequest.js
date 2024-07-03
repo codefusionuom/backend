@@ -40,6 +40,41 @@ exports.getAllCustomerRequests = asyncHandler(async (req,res) => {
      res.json(data)
     } catch (error) {
         res.status(400)
-        throw new Error(error.message || "can't get CustomerRequest");
+        // throw new Error(error.message || "can't get CustomerRequest");
     }
 })
+
+exports.updateCustomerRequest = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    console.log(id, req.body,"update customer")
+    const {status}=req.body
+    try {
+
+        const data = await CustomerRequests.update({status:status}, {
+            where: { id: id },
+            returning: true,
+        })
+        res.status(200).json(data)
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't update Customer");
+    }
+})
+
+exports.createCustomerRequestOnline=async(req)=>{
+    console.log("create customer request")
+    try {
+    const {firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note,status}=req
+        const customerRequest = {
+            firstname, lastname, email, address, mobilePhone,serviceType,serviceDate,note,status
+            
+        };
+        console.log(customerRequest);
+        const data = await CustomerRequests.create(customerRequest)
+        console.log("request entered",data)
+        return data
+    } catch (error) {
+    
+        throw new Error(error || "can't create Customer Request");
+    }
+}

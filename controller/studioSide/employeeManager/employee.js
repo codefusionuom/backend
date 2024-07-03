@@ -9,8 +9,7 @@ const PaymentDetails = db.employeePaymentDetails
 
 
 exports.createEmployee = asyncHandler(async (req, res) => {
-    const {empName, empType, empAdd, empDepartment, empNumber, empEmail } = req.body
-    console.log(empNumber);
+    const { empName, empType, empSalary, empAdd, empDepartment, empNumber , empEmail ,empPassword} = req.body
     const [emp, created] = await Employee.findOrCreate({
         where: { empNumber: empNumber },
         defaults: {
@@ -19,7 +18,8 @@ exports.createEmployee = asyncHandler(async (req, res) => {
             empAdd: empAdd,
             empDepartment: empDepartment,
             empNumber: empNumber,
-            empEmail: empEmail,
+            empEmail : empEmail,
+            empPassword :empPassword
         }
     });
     
@@ -114,6 +114,35 @@ exports.updateEmployee = asyncHandler(async (req, res) => {
     } catch (error) {
         res.status(400);
         throw new Error(error.message || "can't update Employee");
+    }
+})
+
+exports.getEmployeeSearch = asyncHandler(async (req, res) => {
+    const empName = req.query.empName;
+    // console.log("+++++++++++++++++++++++++++++++++get Employee",empName);
+    try {
+        if(empName){
+            const data = await Employee.findAll({
+                where: {
+                    empName: { 
+                      [Op.like]: `%${empName}%`
+                    }
+                  },
+                order: [['createdAt', 'DESC']]
+            })
+            // console.log(data);
+            res.status(200).json(data)
+        }
+        else{
+            const data = await Employee.findAll({
+                order: [['createdAt', 'DESC']]
+            }) 
+            console.log(data);
+            res.status(200).json(data)
+        }
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "can't get Employees");
     }
 })
 

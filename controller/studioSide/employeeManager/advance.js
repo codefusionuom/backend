@@ -8,35 +8,43 @@ const Advance = db.advances;
 
 exports.createAdvance = asyncHandler(async (req, res) => {
 
-    const { empId, advanceAmount, description } = req.body;
-    let {advancerequest} = req.body
-    const reject = false;
-    console.log(advancerequest);
-    if (!advancerequest) {
-        advancerequest=0;
-    }
-    const formatDate = (date) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-        return `${year}-${month}`;
-    };
-
-    const currentDate = new Date();
-    const formattedDate = formatDate(currentDate);
+    try {
+      const {  advanceAmount, description ,advancerequest } = req.body;
+      // let advancerequest = req.query.advancerequest;
+      const { empId } = req.query;
+      const reject = false;
+      console.log("empId   " , empId);
+      console.log("advanceAmount   " ,advanceAmount);
+      console.log("advancerequest   " ,advancerequest);
+      console.log("description   " ,description);
+      if (!advancerequest) {
+          advancerequest=0;
+      }
+      const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+          return `${year}-${month}`;
+      };
+  
+      const currentDate = new Date();
+      const formattedDate = formatDate(currentDate);
+        
       
-    
-    const advance = await Advance.create({
-            empId : empId,
-            advanceAmount: advanceAmount,
-            description: description,
-            monthtaken: formattedDate,
-            advancerequest: advancerequest,
-            reject: reject
-    })
-    res.status(200).json(advance);
-    
-    
-});
+      const advance = await Advance.create({
+              empId : empId,
+              advanceAmount: advanceAmount,
+              description: description,
+              monthtaken: formattedDate,
+              advancerequest: advancerequest,
+              reject: reject
+      })
+      res.status(200).json(advance);
+    } catch (error) {
+     console.log("eroor heeeeeeee" , error)
+    }
+     
+     
+ });
 
 exports.getAdvance = asyncHandler(async (req, res) => {
     const page = req.query.page;

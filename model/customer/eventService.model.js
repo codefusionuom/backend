@@ -1,9 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
-    const eventRequestServicesServices = sequelize.define("eventRequestServicesServices", {
-      eventRequestServiceId: {
+    const eventServices = sequelize.define("eventServices", {
+      eventId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "eventRequestServices",
+          model: "events",
           key: "id", 
         },
       },
@@ -18,6 +18,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       }
     });
-    return eventRequestServicesServices;
+    return eventServices;
   };
   

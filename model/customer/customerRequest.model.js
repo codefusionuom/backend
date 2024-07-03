@@ -28,8 +28,8 @@ module.exports = (sequelize, Sequelize) => {
       },
       status: {
         type: Sequelize.ENUM,
-        values: ['inprogress', 'completed','rejected']
-      },
+        values: ['pending', 'confirmed']
+      }
 
     });
       return customerRequests
