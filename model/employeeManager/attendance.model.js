@@ -26,6 +26,9 @@ module.exports = (sequelize, Sequelize) => {
       checkOut: {
         type: Sequelize.TIME
       },
+      ot: {
+        type: Sequelize.INTEGER
+      },
       // dayType: {
       //   type: Sequelize.STRING
       // },

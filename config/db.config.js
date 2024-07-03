@@ -149,11 +149,11 @@ const empallowance = require("../model/employeeManager/empallowance.model")(sequ
 employees.hasMany(attendance, { foreignKey: 'id' });
 attendance.belongsTo(employees, { foreignKey: 'id' });
 
-// employees.hasMany(advances, {foreignKey: 'empId'});
-// advances.belongsTo(employees, {foreignKey: 'empid'});
+employees.hasMany(advances, {foreignKey: 'empId'});
+advances.belongsTo(employees, {foreignKey: 'empid'});
 
-departments.hasMany(employees, {foreignKey: 'id'});
-employees.belongsTo(departments, {foreignKey: 'id'});
+departments.hasMany(employees, {foreignKey: 'empDepartment'});
+employees.belongsTo(departments, {foreignKey: 'empDepartment'});
 
 paymentAllowanceDeduction.hasMany(empallowance, {foreignKey: 'allowanceid'})
 empallowance.belongsTo(paymentAllowanceDeduction, {foreignKey: 'allowanceid'});
@@ -163,8 +163,8 @@ empallowance.belongsTo(employees, {foreignKey: 'empId'});
 
 
 ///1:1
-// employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
-// employees.hasOne(employeesPaymentDetails, { foreignKey: 'id' });
+employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
+employees.hasOne(employeePaymentDetails, { foreignKey: 'id' });
 
 
 

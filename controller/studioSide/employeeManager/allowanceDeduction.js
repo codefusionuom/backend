@@ -116,11 +116,12 @@ exports.getAllowanceByType = asyncHandler(async (req, res) => {
 
 
 exports.createEmpAllowance = asyncHandler(async (req, res) => {
-    const { id, empId, amount } = req.body
+    const { id, empId, amount, date } = req.body
     const record = await empallowance.create({
         allowanceid: id,
         empId: empId,
         Amount: amount,
+        date: date,
     });
     if (record) {
         res.status(201).json({ message: "Record Created", record });
@@ -139,12 +140,24 @@ exports.getEmpAllowanceandSearch = asyncHandler(async (req, res) => {
     try {
         if(empName){
             const data = await empallowance.findAndCountAll({
-                where: {
-                    empName: { 
-                      [Op.like]: `%${empName}%`
-                    }
-                  },
-                include: [{ model: paymentAllowanceDeduction,  attributes: ['allowanceDeduction','allowanceDeductionName'], },{ model: Employee,  attributes: ['empName'], }],
+                // where: {
+                //     empName: { 
+                //       [Op.like]: `%${empName}%`
+                //     }
+                //   },
+                include: [
+                    { 
+                        model: paymentAllowanceDeduction,  
+                        attributes: ['allowanceDeduction','allowanceDeductionName'],
+                     },{ 
+                        model: Employee,  
+                        attributes: ['empName'], 
+                        where: {
+                            empName: { 
+                              [Op.like]: `%${empName}%`
+                            }
+                          },
+                    }],
                 limit: limit,
                 offset: offset,
                 order: [['createdAt', 'DESC']]

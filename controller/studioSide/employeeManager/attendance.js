@@ -9,6 +9,14 @@ const Employee = db.employees;
 exports.createAttendance = asyncHandler(async (req, res) => {
       
       const {  id, checkIn, checkOut, dayType, leaveType, dateString, checkInSeconds, checkOutSeconds } = req.body;
+      const diff = checkOutSeconds-checkInSeconds-28800;
+      let ot
+      if (diff>=0) {
+         ot = diff
+      }
+      else{
+         ot = 0;
+      }
   
     //   var selectedDateWithOnedayOff = new Date(date);
     //   const correctedDate =  new Date( selectedDateWithOnedayOff.getTime() + Math.abs(selectedDateWithOnedayOff.getTimezoneOffset()*60000) );
@@ -22,6 +30,7 @@ exports.createAttendance = asyncHandler(async (req, res) => {
               leaveType: leaveType,
               checkInSeconds: checkInSeconds,
               checkOutSeconds: checkOutSeconds,
+              ot: ot,
           }
       });
       

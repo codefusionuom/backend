@@ -48,12 +48,13 @@ exports.getAdvance = asyncHandler(async (req, res) => {
             where: 
         {
             reject: false,
-        }
-        },{
-            //   include: [{ model: Employee, attributes: ['empName'], }],
-            // limit: 10,
-            limit: limit,
-            offset: offset,
+        },include: [
+            {
+              model: Employee,
+              attributes: ['empName'],
+            }
+          ],
+
         });
 
         // const advances = rows;
@@ -79,7 +80,7 @@ exports.getRejectAdvance = asyncHandler(async (req, res) => {
         const advances = await Advance.findAndCountAll({
             where: 
         {
-            reject: false,
+            reject: true,
         }
         },{
             //   include: [{ model: Employee, attributes: ['empName'], }],
@@ -230,3 +231,6 @@ exports.rejectAdvance = asyncHandler(async (req, res) => {
         throw new Error(error.message || "can't update Advance Record");
     }
 })
+
+
+

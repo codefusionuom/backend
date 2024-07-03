@@ -1,9 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
-const { Op, findOrCreate } = require("sequelize");
+const { Op, findOrCreate, where } = require("sequelize");
 // const employeeModel = require("../../../model/employeeManager/employee.model");
 const Employee = db.employees;
 const Department = db.departments;
+const PaymentDetails = db.employeePaymentDetails
 
 
 
@@ -61,9 +62,36 @@ exports.createEmployee = asyncHandler(async (req, res) => {
 
 
 
+// exports.getEmployeeByid = asyncHandler(async (req, res) => { 
+//     const { id } = req.params; // Assuming you're passing id as a route parameter
+//     const employee = await Employee.findByPk(id);
+//     if (employee === null) {
+//         console.log('Employee not found!');
+//         res.status(404).json({ error: 'Employee not found' });
+//     } else {
+//         res.status(200).json(employee);
+//     }
+// });
+
+
 exports.getEmployeeByid = asyncHandler(async (req, res) => { 
     const { id } = req.params; // Assuming you're passing id as a route parameter
-    const employee = await Employee.findByPk(id);
+    const employee = await Employee.findOne({
+        where: {
+            id: id,
+        },
+        include: [
+            {
+              model: Department,
+              attributes: ['id','departmentName'],
+            //   where: {empDepartment: id }
+            },{
+                model: Department,
+                attributes: ['id','departmentName'],
+              //   where: {empDepartment: id }
+              },
+          ],
+    });
     if (employee === null) {
         console.log('Employee not found!');
         res.status(404).json({ error: 'Employee not found' });
@@ -71,7 +99,6 @@ exports.getEmployeeByid = asyncHandler(async (req, res) => {
         res.status(200).json(employee);
     }
 });
-
 
 
 exports.updateEmployee = asyncHandler(async (req, res) => {
@@ -129,6 +156,13 @@ exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
                       [Op.like]: `%${empName}%`
                     }
                   },
+                  include: [
+                    {
+                      model: Department,
+                      attributes: ['id','departmentName'],
+                    //   where: {empDepartment: id }
+                    }
+                  ],
                 limit: limit,
                 offset: offset,
                 order: [['createdAt', 'DESC']]

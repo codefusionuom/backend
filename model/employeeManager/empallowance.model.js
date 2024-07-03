@@ -21,7 +21,8 @@ module.exports = (sequelize, Sequelize) => {
       },
       Amount: {
         type: Sequelize.INTEGER,
-      }
+      },
+      date: Sequelize.STRING,
     });
     return empallowance;
   };
