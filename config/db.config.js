@@ -188,17 +188,28 @@ db.assignedTasks = assignedTasks;
 
 const paymentAllowanceDeduction = require("../model/employeeManager/paymentAllowanceDeduction.model")(sequelize,Sequelize)
 const advances = require("../model/employeeManager/advance.model")(sequelize,Sequelize)
+const empallowance = require("../model/employeeManager/empallowance.model")(sequelize, Sequelize)
 
 /// 1:M
 employees.hasMany(attendance, { foreignKey: 'id' });
 attendance.belongsTo(employees, { foreignKey: 'id' });
 
 employees.hasMany(advances, {foreignKey: 'empId'});
-advances  .belongsTo(employees, {foreignKey: 'id'});
+advances.belongsTo(employees, {foreignKey: 'empid'});
+
+departments.hasMany(employees, {foreignKey: 'empDepartment'});
+employees.belongsTo(departments, {foreignKey: 'empDepartment'});
+
+paymentAllowanceDeduction.hasMany(empallowance, {foreignKey: 'allowanceid'})
+empallowance.belongsTo(paymentAllowanceDeduction, {foreignKey: 'allowanceid'});
+
+employees.hasMany(empallowance, {foreignKey: 'empId'});
+empallowance.belongsTo(employees, {foreignKey: 'empId'});
+
 
 ///1:1
-// employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
-// employees.hasOne(employeesPaymentDetails, { foreignKey: 'id' });
+employeePaymentDetails.belongsTo(employees, { foreignKey: 'id' });
+employees.hasOne(employeePaymentDetails, { foreignKey: 'id' });
 
 // admin.hasOne(employees, {
 //   foreignKey: 'empEmail',
@@ -232,9 +243,11 @@ db.employees = employees;
 db.employeePaymentDetails = employeePaymentDetails;
 db.attendance = attendance;
 db.advances = advances;
+db.empallowance = empallowance;
 
 db.admin = admin;
 db.users=users
 db.privileges=privileges
+db.departments=departments
 
 module.exports = db;

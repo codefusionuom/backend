@@ -8,45 +8,79 @@ const Advance = db.advances;
 
 exports.createAdvance = asyncHandler(async (req, res) => {
 
-   try {
-     const {  advanceAmount, description ,advancerequest } = req.body;
-     // let advancerequest = req.query.advancerequest;
-     const { empId } = req.query;
-     const reject = false;
-     console.log("empId   " , empId);
-     console.log("advanceAmount   " ,advanceAmount);
-     console.log("advancerequest   " ,advancerequest);
-     console.log("description   " ,description);
-     if (!advancerequest) {
-         advancerequest=0;
-     }
-     const formatDate = (date) => {
-         const year = date.getFullYear();
-         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-         return `${year}-${month}`;
-     };
- 
-     const currentDate = new Date();
-     const formattedDate = formatDate(currentDate);
-       
+    try {
+      const {  advanceAmount, description ,advancerequest } = req.body;
+      // let advancerequest = req.query.advancerequest;
+      const { empId } = req.query;
+      const reject = false;
+      console.log("empId   " , empId);
+      console.log("advanceAmount   " ,advanceAmount);
+      console.log("advancerequest   " ,advancerequest);
+      console.log("description   " ,description);
+      if (!advancerequest) {
+          advancerequest=0;
+      }
+      const formatDate = (date) => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+          return `${year}-${month}`;
+      };
+  
+      const currentDate = new Date();
+      const formattedDate = formatDate(currentDate);
+        
+      
+      const advance = await Advance.create({
+              empId : empId,
+              advanceAmount: advanceAmount,
+              description: description,
+              monthtaken: formattedDate,
+              advancerequest: advancerequest,
+              reject: reject
+      })
+      res.status(200).json(advance);
+    } catch (error) {
+     console.log("eroor heeeeeeee" , error)
+    }
      
-     const advance = await Advance.create({
-             empId : empId,
-             advanceAmount: advanceAmount,
-             description: description,
-             monthtaken: formattedDate,
-             advancerequest: advancerequest,
-             reject: reject
-     })
-     res.status(200).json(advance);
-   } catch (error) {
-    console.log("eroor heeeeeeee" , error)
-   }
-    
-    
-});
+     
+ });
 
 exports.getAdvance = asyncHandler(async (req, res) => {
+    const page = req.query.page;
+    let limit = 8;
+    let offset = limit * (page - 1)
+    console.log(page);
+    try {
+        const advances = await Advance.findAndCountAll({
+            where: 
+        {
+            reject: false,
+        },include: [
+            {
+              model: Employee,
+              attributes: ['empName'],
+            }
+          ],
+
+        });
+
+        // const advances = rows;
+
+        if (!advances || advances.length === 0) {
+            res.status(200).json([]);
+        } else {
+            res.status(200).json(advances);
+            console.log(advances)
+        }
+    } catch (error) {
+        console.error("Error fetching employees:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
+exports.getRejectAdvance = asyncHandler(async (req, res) => {
     const page = req.query.page;
     let limit = 8;
     let offset = limit * (page - 1)
@@ -54,7 +88,7 @@ exports.getAdvance = asyncHandler(async (req, res) => {
         const advances = await Advance.findAndCountAll({
             where: 
         {
-            reject: false,
+            reject: true,
         }
         },{
             //   include: [{ model: Employee, attributes: ['empName'], }],
@@ -76,6 +110,7 @@ exports.getAdvance = asyncHandler(async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+
 
 exports.getEmployeesandSearch = asyncHandler(async (req, res) => {
     const page = req.query.page;
@@ -205,66 +240,5 @@ exports.rejectAdvance = asyncHandler(async (req, res) => {
     }
 })
 
-exports.getAdvanceForEmployee = asyncHandler(async (req, res) => {
-    const page = req.query.page;
-    const id = req.query.empId;
-    let limit = 8;
-    let offset = limit * (page - 1)
-    try {
-        const advances = await Advance.findAndCountAll({
-            where: 
-        {
-            empId: id,
-        }
-        },{
-            //   include: [{ model: Employee, attributes: ['empName'], }],
-            // limit: 10,
-            limit: limit,
-            offset: offset,
-        });
 
-        // const advances = rows;
-
-        if (!advances || advances.length === 0) {
-            res.status(200).json([]);
-        } else {
-            res.status(200).json(advances);
-            console.log(advances)
-        }
-    } catch (error) {
-        console.error("Error fetching employees:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
-exports.getRejectAdvance = asyncHandler(async (req, res) => {
-    const page = req.query.page;
-    let limit = 8;
-    let offset = limit * (page - 1)
-    try {
-        const advances = await Advance.findAndCountAll({
-            where: 
-        {
-            reject: true,
-        }
-        },{
-            //   include: [{ model: Employee, attributes: ['empName'], }],
-            // limit: 10,
-            limit: limit,
-            offset: offset,
-        });
-
-        // const advances = rows;
-
-        if (!advances || advances.length === 0) {
-            res.status(200).json([]);
-        } else {
-            res.status(200).json(advances);
-            console.log(advances)
-        }
-    } catch (error) {
-        console.error("Error fetching employees:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
 

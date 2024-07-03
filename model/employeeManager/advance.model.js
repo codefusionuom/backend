@@ -32,5 +32,5 @@ module.exports = (sequelize, Sequelize) => {
     id: false // Disable the default id primary key
   });
 
-  return Advances;
+  return Advances;
 };
