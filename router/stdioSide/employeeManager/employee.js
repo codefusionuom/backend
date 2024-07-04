@@ -1,7 +1,7 @@
 const express =require('express');
 const { createEmployee, getEmployees, getEmployeeByid, updateEmployee, deleteEmplloyee, deleteEmployee, getEmployeesandSearch, getEmployeeSearch } = require('../../../controller/studioSide/employeeManager/employee');
 const { createEmployeePaymentDetails, getEmployeePaymentDetailsByid, updateEmployeePaymentDatails, getEmployeeSearchViewPaymentDetails } = require('../../../controller/studioSide/employeeManager/employeePaymentDetails');
-const { createAttendance, getAttendance, getCheckInTotal, getCheckOutTotal, getAttendanceandSearch } = require('../../../controller/studioSide/employeeManager/attendance');
+const { createAttendance, getAttendance, getCheckInTotal, getCheckOutTotal, getAttendanceandSearch, getAttendenceCountToday } = require('../../../controller/studioSide/employeeManager/attendance');
 const { createAllowanceDeduction, getAllowance, deleteAllowance, getAllowanceByType, createEmpAllowance, getEmpAllowanceandSearch, getempAllowance, getEmpAllowanceByid, updateEmpAllowance} = require('../../../controller/studioSide/employeeManager/allowanceDeduction');
 const { createAdvance, getAdvance, getAdvanceByid, updateAdvance, acceptAdvance, rejectAdvance, getRejectAdvance, getEmployeesandSearchForAdvance } = require('../../../controller/studioSide/employeeManager/advance');
 // const { createAdvance, getAdvance, getAdvanceByid, updateAdvance, } = require("../../../controller/studioSide/employeeManager/payment")
@@ -78,6 +78,7 @@ router.get("/getAttendance", getAttendance);
 router.get("/getCheckInTotal", getCheckInTotal);
 router.get("/getCheckOutTotal", getCheckOutTotal);
 router.get("/getAttendanceandSearch", getAttendanceandSearch);
+router.get('/getAttendenceCountToday', getAttendenceCountToday);
 
 
 

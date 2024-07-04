@@ -41,14 +41,15 @@ exports.getCurruntAdmin = asyncHandler(async (req, res) => {
     );
 
     // console.log(privilegesObject);
+    console.log(data[0]);
 
     const updateData = {
       id: data[0].id,
       empName: data[0].empName,
       empAdd: data[0].empAdd,
-      empType: data[0].empAdd,
+      empType: data[0].empType,
       empDepartment: data[0].empDepartment,
-      empNumber: data[0].emempNumberpAdd,
+      empNumber: data[0].empNumber,
       empEmail: data[0].empEmail,
       privileges: privilegesArray,
     };

@@ -17,20 +17,8 @@ const Admin = db.admin;
 const Employee = db.employees;
 const User = db.users;
 
-// Function to check if an object is empty
-const isEmpty = (obj) => {
-  for (var prop in obj) {
-    if (obj.hasOwnProperty(prop)) return false;
-  }
-  return JSON.stringify(obj) === JSON.stringify({});
-};
-
 // Forgot Password
 exports.user_forgotPassword = asyncHandler(async (req, res, next) => {
-  // if (isEmpty(req.body)) return next(new AppError('Form data not found', 400));
-
-  // const { error } = FORGOT_PASSWORD_MODEL.validate(req.body);
-  // if (error) return next(new AppError(error.details[0].message, 400));
 
   const { email } = req.body;
   const employee = await Employee.findOne({ where: { empEmail:email } });
