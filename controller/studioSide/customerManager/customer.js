@@ -62,8 +62,6 @@ exports.deleteCustomer = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error(error.message || "can't remove Customer");
     }
-
-
 })
 
 
@@ -83,6 +81,7 @@ exports.updateCustomer = asyncHandler(async (req, res) => {
         throw new Error(error.message || "can't update Customer");
     }
 })
+
 exports.getCustomers = asyncHandler(async (req, res) => {
     const page = req.query.page;
     const mobilePhone = req.query.mobilePhone;
@@ -93,9 +92,11 @@ exports.getCustomers = asyncHandler(async (req, res) => {
         if(mobilePhone){
             const data = await Customer.findAndCountAll({
                 where: {
-                    mobilePhone: { 
-                      [Op.like]: `%${mobilePhone}%`
-                    }
+                    [Op.or]: [
+                        { mobilePhone: { [Op.like]: `%${mobilePhone}%` } },
+                        { firstname: { [Op.like]: `%${mobilePhone}%` } },
+                        { lastname: { [Op.like]: `%${mobilePhone}%` } }
+                      ]
                   },
                 limit: limit,
                 offset: offset,

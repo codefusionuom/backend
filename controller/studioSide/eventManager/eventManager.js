@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 // const Event = require("../../../model/eventManager/event.model");
 const Event = db.events;
+const nodemailer = require('nodemailer');
+const EventReferences =db.eventReferences
 
 const { Op, Sequelize } = require("sequelize");
 const crypto = require("crypto");
@@ -80,9 +82,45 @@ const updateEventConfirm =  asyncHandler(async( req ,res ) => {
 try {
   const id = req.params.id;
     const {  status } = req.body;
-    console.log(id,status);
+    console.log(id,status,"pppppppppppp");
     const confirmedEvent = await Event.update({status:status} , {where :{id : id}})
-    res.send(confirmedEvent)
+    const Events = await Event.findOne({
+      where: { id: id },
+      include: [{ model: Customer }]
+    });
+    console.log(Events.id,Events.customer.email,'kkkkkkkkkkkkkk');
+    // if(status == "Upcoming"){
+      
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'anonymousshield014@gmail.com',
+          pass: 'ugqa dhrk zyze rneq',
+        },
+      });
+      const referenceNumber=`E-${Events.serviceId}${Events.id}-${Events.customer.mobilePhone.slice(2,6)}`
+      console.log(referenceNumber);
+    await EventReferences.create({eventId:Events.id,email:Events.customer.email,referenceNumber:referenceNumber})
+      const mailOptions = {
+        from: 'anonymousshield014@gmail.com',
+        to: "nimeth20011002@gmail.com",
+        // to: Events.customer.email,
+        subject: 'Event Tracking OTP',
+        text: `EreferenceNumber`,
+      };
+    
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          // return next(new AppError(error.message, 500));
+          res
+            .status(400)
+            .send({ error });
+        } else {
+          res.json({ data: 'Your OTP has been sent to the email' });
+        }
+      });
+    // }
+    // res.send(Events)
 } catch (error) {
   res.status(400).json({ message: error.message });
 }
@@ -130,34 +168,16 @@ const allEvents = asyncHandler(async(req, res) =>{
 
 
 
-// const filterEventsBetween = asyncHandler(async(req, res) =>{
+const filterEventsBetween = asyncHandler(async(req, res) =>{
 
-//   const startedDate = new Date("2024-02-28T18:30:00.000Z");
-//   const endDate = new Date("2024-03-09T18:30:00.000Z");
-  
-//   // Format the dates to match the database format
-//   const formatDatabaseDate = (date) => {
-//     return date.toISOString();
-//   };
-  
-//   const formattedStartDate = formatDatabaseDate(startedDate);
-//   const formattedEndDate = formatDatabaseDate(endDate);
-  
-//   // Find events between the specified dates
-//   Event.findAll({
-//     where: {
-//       date: {
-//         [Op.between]: [formattedStartDate, formattedEndDate],
-//       },
-//     },
-//   })
-//     .then((result) => res.status(200).json({ data: result }))
-//     .catch((error) => res.status(404).json({ errorInfo: error }));
-// })
-const filterEventsBetween = asyncHandler(async (req, res) => {
-  const startedDate = new Date("2024-02-28T18:30:00.000Z");
-  const endDate = new Date("2024-03-09T18:30:00.000Z");
+  // const startedDate = new Date("2024-06-28T18:30:00.000Z");
+  // const endDate = new Date("2024-08-09T18:30:00.000Z");
+  const startedDate = new Date();
+  // Set endDate to seven days before the current date
+  const endDate = new Date();
+  endDate.setDate(startedDate.getDate() + 27);
 
+  
   // Format the dates to match the database format
   const formatDatabaseDate = (date) => {
     return date.toISOString();
@@ -165,7 +185,7 @@ const filterEventsBetween = asyncHandler(async (req, res) => {
 
   const formattedStartDate = formatDatabaseDate(startedDate);
   const formattedEndDate = formatDatabaseDate(endDate);
-
+  console.log(formattedStartDate,formattedEndDate,"jjjjj");
   // Find events between the specified dates
   Event.findAll({
     where: {
@@ -173,11 +193,11 @@ const filterEventsBetween = asyncHandler(async (req, res) => {
         [Op.between]: [formattedStartDate, formattedEndDate],
       },
     },
+    order: [['createdAt', 'DESC']]
   })
-    .then((result) => res.status(200).json({ data: result }))
-    .catch((error) => res.status(404).json({ errorInfo: error }));
-});
-
+    .then((result) => {res.status(200).json({ data: result });console.log(result)})
+    .catch((error) => {res.status(404).json({ errorInfo: error });console.log(error)});
+})
 
 const getOnedayEvents = asyncHandler(async (req, res) => {
   await Event.findAll({

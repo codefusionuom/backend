@@ -1,42 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getCustomers,
-  createCustomers,
-  deleteCustomer,
-  getSearchCustomerEvents,
-  updateCustomer,
-  getSearchCustomer,
-} = require('../../../controller/studioSide/customerManager/customer');
-const {} = require('./tutorial');
-const {
-  createPayment,
-  getCustomerPayment,
-  getCustomerPaymentDetails,
-  getSearchAllPayment,
-  paymentByEvent,
-  getPayment,
-  getTopPaymentsToday,
-} = require('../../../controller/studioSide/customerManager/payment');
-const {
-  getAllCustomerRequests,
-  updateCustomerRequest,
-} = require('../../../controller/studioSide/customerManager/customerRequest');
-const {
-  getServices,
-  getService,
-  createService,
-  updateService,
-  deleteService,
-  updateServiceInput,
-  updateServiceSelect,
-  updateServiceOptions,
-} = require('../../../controller/studioSide/customerManager/service');
-const {
-  createEventRequest,
-  getAllEventRequests,
-  getEventRequest,
-} = require('../../../controller/studioSide/customerManager/eventRequest');
+const{getCustomers, createCustomers, deleteCustomer,getSearchCustomerEvents,updateCustomer,getSearchCustomer}=require('../../../controller/studioSide/customerManager/customer');
+const {  } = require('./tutorial');
+const { createPayment,getCustomerPayment,getCustomerPaymentDetails ,getSearchAllPayment, paymentByEvent, getPayment} = require('../../../controller/studioSide/customerManager/payment');
+const { getAllCustomerRequests, updateCustomerRequest } = require('../../../controller/studioSide/customerManager/customerRequest');
+const { getServices, getService, createService, updateService, deleteService, updateServiceInput, updateServiceSelect, updateServiceOptions } = require('../../../controller/studioSide/customerManager/service');
+const { createEventRequest, getAllEventRequests, getEventRequest, getAllEvents } = require('../../../controller/studioSide/customerManager/eventRequest');
+
 
 // customer
 router.put('/customer/:id', updateCustomer);
@@ -58,9 +28,10 @@ router.put('/customerRequest/:id', updateCustomerRequest);
 router.post('/customerRequest', getAllCustomerRequests);
 router.get('/customerRequest/?search');
 // router.post("/customerRequest/confirm", );
-router.post('/eventRequestService', createEventRequest);
-router.get('/eventRequest', getAllEventRequests);
-router.get('/eventRequest/:id', getEventRequest);
+router.post("/eventRequestService", createEventRequest);
+router.get("/event", getAllEvents);
+router.get("/eventRequest", getAllEventRequests);
+router.get("/eventRequest/:id", getEventRequest);
 //customerServices
 router.get('/Service', getServices);
 router.get('/Service/:id', getService);
