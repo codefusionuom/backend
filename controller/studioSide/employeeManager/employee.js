@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../../config/db.config");
 const { Op, findOrCreate, where } = require("sequelize");
+const bcrypt = require("bcryptjs");
 // const employeeModel = require("../../../model/employeeManager/employee.model");
 const Employee = db.employees;
 const Department = db.departments;
@@ -9,7 +10,10 @@ const PaymentDetails = db.employeePaymentDetails
 
 
 exports.createEmployee = asyncHandler(async (req, res) => {
-    const { empName, empType, empSalary, empAdd, empDepartment, empNumber , empEmail ,empPassword} = req.body
+    const { empName, empType, empAdd, empDepartment, empNumber , empEmail ,empPassword} = req.body
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(empPassword, salt);
     const [emp, created] = await Employee.findOrCreate({
         where: { empNumber: empNumber },
         defaults: {
@@ -19,7 +23,7 @@ exports.createEmployee = asyncHandler(async (req, res) => {
             empDepartment: empDepartment,
             empNumber: empNumber,
             empEmail : empEmail,
-            empPassword :empPassword
+            empPassword :hashedPassword
         }
     });
     
@@ -86,8 +90,8 @@ exports.getEmployeeByid = asyncHandler(async (req, res) => {
               attributes: ['id','departmentName'],
             //   where: {empDepartment: id }
             },{
-                model: Department,
-                attributes: ['id','departmentName'],
+                model: PaymentDetails,
+                attributes: ['empSalary'],
               //   where: {empDepartment: id }
               },
           ],
@@ -108,7 +112,6 @@ exports.updateEmployee = asyncHandler(async (req, res) => {
 
         const data = await Employee.update(req.body, {
             where: { id: id },
-            // returning: true,
         })
         res.status(200).json(data)
     } catch (error) {

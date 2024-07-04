@@ -29,6 +29,7 @@ module.exports = (sequelize, Sequelize) => {
     payment: {
       type: Sequelize.REAL,
     },
+    //
     status: {
       type: Sequelize.ENUM,
       values: ['Pending', 'Upcoming', 'Done' , 'Paused' ,'Rejected'],

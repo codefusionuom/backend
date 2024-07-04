@@ -57,6 +57,7 @@ exports.getAttendance = asyncHandler(async (req, res) => {
                   attributes: ['empName'],
                 }
               ],
+              order: [['createdAt', 'DESC']],
             limit: 10,
             limit: limit,
             offset: offset,
@@ -198,6 +199,46 @@ exports.getAttendanceandSearch = asyncHandler(async (req, res) => {
         throw new Error(error.message || "can't get Employees");
     }
 })
+exports.getAttendenceCountToday = asyncHandler(async (req, res) => {
+  const today = new Date();
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
+
+  const formattedToday = formatDate(today);
+
+  try {
+    const { count, rows } = await Attendance.findAndCountAll({
+      where: {
+        date: {
+          [Op.startsWith]: formattedToday,
+        },
+      },
+      include: [
+        {
+          model: Employee,
+          attributes: ['empName'],
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    res.status(200).json({ count });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message || 'Error fetching attendance count',
+    });
+  }
+});
 
 
 

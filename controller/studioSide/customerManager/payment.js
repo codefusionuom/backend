@@ -110,7 +110,7 @@ else{
       ],
       order: [['createdAt', 'DESC']]
     });
-    // console.log(data)
+    // console.log(data.count)
     res.status(200).json(data);
 }
 
@@ -119,6 +119,46 @@ else{
     throw new Error(error.message || "can't get Customer");
   }
 });
+
+
+exports.getPayment = asyncHandler(async (req, res) => {
+  try {
+    // Get today's date in YYYY-MM-DD format
+    const todayStart = moment().startOf('day').toDate();
+    const todayEnd = moment().endOf('day').toDate();
+
+    console.log(todayStart, todayEnd);
+
+    // Find all customer payments for today
+    const data = await CustomerPayment.findAndCountAll({
+      where: {
+        createdAt: {
+          [Op.between]: [todayStart, todayEnd],
+        },
+      },
+    });
+
+    // Calculate the total payment
+    const totalPayment = data.rows.reduce(
+      (total, payment) => total + payment.payment,
+      0
+    );
+    // Get unique customers
+    const uniqueCustomers = new Set(
+      data.rows.map((payment) => payment.customerMobilePhone)
+    );
+
+    // Count of unique customers
+    const uniqueCustomerCount = uniqueCustomers.size;
+
+    console.log(data.rows);
+    res.status(200).json({ totalPayment, uniqueCustomerCount });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get Customer payments");
+  }
+});
+
 
 exports.getCustomerPaymentDetails = asyncHandler(async (req, res) => {
   const id = req.params.id;
@@ -223,3 +263,4 @@ exports.paymentByEvent=asyncHandler(async(req,res)=>{
     throw new Error(error.message || "can't get Customer");
 }
 })
+
