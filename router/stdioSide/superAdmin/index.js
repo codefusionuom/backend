@@ -18,6 +18,7 @@ const {
   createDepartment,
   deleteDepartment,
   getDepartmentByid,
+  filterPaymentsBetween,
 } = require('../../../controller/studioSide/superAdmin/department');
 
 // admin
@@ -56,6 +57,7 @@ router.post('/department', createDepartment);
 router.delete('/departmentd/:id', deleteDepartment);
 router.get('/departmentId/:id', getDepartmentByid);
 router.get('/department/?search');
+router.get('/Filter/payments/',filterPaymentsBetween );
 
 // payments
 router.get('/payments/:page');

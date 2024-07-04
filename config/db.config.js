@@ -36,6 +36,10 @@ const customers = require('../model/customer/customer.model')(
   sequelize,
   Sequelize
 );
+const eventReferences=require('../model/customer/eventReferance.model')(
+  sequelize,
+  Sequelize
+);
 const customerPayments = require('../model/customer/payment.model')(
   sequelize,
   Sequelize
@@ -95,6 +99,10 @@ events.belongsTo(services);
 events.hasMany(tasks);
 tasks.belongsTo(events);
 
+
+
+// events.hasOne(eventReferences)
+// eventReferences.belongsTo(events);
 // assignedTasks.belongsTo(tasks);
 // assignedTasks.belongsTo(employees);
 
@@ -174,6 +182,7 @@ db.customers = customers;
 db.customerPayments = customerPayments;
 db.customerRequests = customerRequests;
 
+db.eventReferences=eventReferences;
 // db.eventRequests=eventRequests
 db.eventServices=eventServices
 

@@ -31,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     status: {
       type: Sequelize.ENUM,
-      values: ['pending','Offline', 'Upcoming ','Desertion', 'Done' , 'Active']
+      values: ['Pending', 'Upcoming', 'Done' , 'Paused' ,'Rejected'],
     },
   });
   return events;

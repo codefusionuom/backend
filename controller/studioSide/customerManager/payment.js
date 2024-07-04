@@ -9,6 +9,7 @@ const CustomerPayment = db.customerPayments;
 const Customer = db.customers;
 const Events = db.events;
 const Services=db.services
+
 exports.createPayment = asyncHandler(async (req, res) => {
   const {
     description,
@@ -49,17 +50,70 @@ exports.createPayment = asyncHandler(async (req, res) => {
 });
 
 exports.getCustomerPayment = asyncHandler(async (req, res) => {
-  const page = req.params.page;
-  let limit = 4;
-  let offset = limit * (page - 1);
-  console.log("lmit", limit, offset);
+
   try {
+      const page = req.query.page;
+  const date = new Date(req.query.date);
+  let limit = 8;
+  let offset = limit * (page - 1);
+  console.log("lmit", limit, page,date);
+if(!isNaN(date.getTime())){
+console.log("date");
+const startOfDay = new Date(date.setHours(0, 0, 0, 0));
+const endOfDay = new Date(date.setHours(23, 59, 59, 999));
+
+console.log("Start of day:", startOfDay.toISOString());
+console.log("End of day:", endOfDay.toISOString());
+
+const formatDatabaseDate = (date) => {
+  return date.toISOString();
+};
+
+const formatdate = formatDatabaseDate(date);
+console.log(formatdate);
+  const data = await CustomerPayment.findAndCountAll({where: {
+    createdAt: {
+        [Op.between]: [startOfDay, endOfDay]
+      },
+  },
+    limit: limit,
+    offset: offset,
+    include: [
+      {
+        model: Events,
+        include: [
+          {
+            model: Services,
+          },
+        ],
+      },
+    ],
+    order: [['createdAt', 'DESC']]
+  });
+  // console.log(data)
+  res.status(200).json(data);
+}
+else{
+  console.log("no date");
     const data = await CustomerPayment.findAndCountAll({
       limit: limit,
       offset: offset,
+      include: [
+        {
+          model: Events,
+          include: [
+            {
+              model: Services,
+            },
+          ],
+        },
+      ],
+      order: [['createdAt', 'DESC']]
     });
     // console.log(data)
     res.status(200).json(data);
+}
+
   } catch (error) {
     res.status(400);
     throw new Error(error.message || "can't get Customer");
@@ -131,10 +185,19 @@ exports.getSearchPayment=asyncHandler(async(req,res)=>{
                     
                   
                 }
-              }
+              },
+              {
+                model: Events,
+                include: [
+                  {
+                    model: Services,
+                  },
+                ],
+              },
             ],
             limit: limit,
             offset: offset,
+            order: [['createdAt', 'DESC']]
           })
           console.log(data.createdAt)
           res.status(200).json(data)  

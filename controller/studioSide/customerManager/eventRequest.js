@@ -63,6 +63,90 @@ exports.createEventRequest = asyncHandler(async (req,res) => {
   }
 });
 
+exports.getAllEvents = asyncHandler(async (req, res) => {
+  // console.log("get all event requests");
+  const page = parseInt(req.query.page);
+  const status = req.query.status;
+  const limit =parseInt(req.query.limit)
+  const search=req.query.search
+  const service=req.query.service
+  console.log(service);
+  // const {status,active,limit}=req.body
+  // const page = active;
+  let offset = limit * (page - 1)
+
+  // console.log(page,limit,status);
+  try {
+  if(service !== "all"){
+    const events = await Events.findAndCountAll({where:{status:status},
+      include: [
+        {
+          model: EventServices,
+        },
+        {
+          model: Customer,
+          where: {
+            [Op.or]: [
+                { mobilePhone: { [Op.like]: `%${search}%` } },
+                { firstname: { [Op.like]: `%${search}%` } },
+                { lastname: { [Op.like]: `%${search}%` } }
+              ]
+          },
+        },
+        {
+          model: Services,
+          where: {
+            serviceName:service // Ensure 'service' is defined
+          }
+        }
+      ],  
+      limit: limit,
+      offset: offset,
+      order: [['createdAt', 'DESC']]
+    });
+    console.log(events);
+    console.log("data");
+    res.json(events);
+     console.log("with");
+  }
+  else{
+    const events = await Events.findAndCountAll({where:{status:status},
+      include: [
+        {
+          model: EventServices,
+        },
+        {
+          model: Customer,
+          where: {
+            [Op.or]: [
+                { mobilePhone: { [Op.like]: `%${search}%` } },
+                { firstname: { [Op.like]: `%${search}%` } },
+                { lastname: { [Op.like]: `%${search}%` } }
+              ]
+          },
+        },
+        {
+          model: Services,
+          
+        }
+      ],  
+      limit: limit,
+      offset: offset,
+      order: [['createdAt', 'DESC']]
+    });
+    console.log(events);
+    console.log("data");
+    res.json(events);
+    console.log("not");
+  }
+      
+   
+    
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message || "can't get CustomerRequest");
+  }
+});
 exports.getAllEventRequests = asyncHandler(async (req, res) => {
   console.log("get all event requests");
   const page = parseInt(req.query.page);
@@ -98,7 +182,6 @@ exports.getAllEventRequests = asyncHandler(async (req, res) => {
     throw new Error(error.message || "can't get CustomerRequest");
   }
 });
-
 exports.getEventRequest = asyncHandler(async (req, res) => {
   console.log("get  event request");
   const id = req.params.id;
