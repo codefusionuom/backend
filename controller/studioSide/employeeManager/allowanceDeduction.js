@@ -249,6 +249,30 @@ exports.updateEmpAllowance = asyncHandler(async (req, res) => {
 })
 
 
+exports.deleteEmpAllowance = asyncHandler(async (req, res) => {
+
+    const id = req.query.id
+    if (!id) {
+        res.status(400).send({ message: "Employee not found" });
+        return
+    }
+    try {
+
+        const data = await empallowance.destroy({
+            where: { id: id },
+            // returning: true
+        })
+        return res.status(200).json({ message: "Employee deleted successfully" });
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "Couldn't remove employee");
+    }
+
+
+})
+
+
 
 
 

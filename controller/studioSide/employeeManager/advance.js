@@ -188,7 +188,7 @@ exports.getAdvanceByid = asyncHandler(async (req, res) => {
         where: 
         {
             id: id,
-        }
+        },include: [{ model: Employee, attributes: ['empName'], }],
     }
         ,{
         // include: [{ model: Employee, attributes: ['empName'], }],
@@ -272,4 +272,47 @@ exports.rejectAdvance = asyncHandler(async (req, res) => {
 })
 
 
+exports.getAdvanceForEmployee = asyncHandler(async (req, res) => {
+    const { id } = req.query; // Assuming you're passing id as a route parameter
+    console.log(id);
+    const advance = await Advance.findAll({
+        where: 
+        {
+            empId: id,
+        }
+    }
+        ,{
+        // include: [{ model: Employee, attributes: ['empName'], }],
+    }
+);
+    if (advance === null) {
+        console.log('Advance Record not found!');
+        res.status(404).json({ error: 'Advance Record not found' });
+    } else {
+        res.status(200).json(advance);
+    }
+});
 
+
+exports.deleteAdvance = asyncHandler(async (req, res) => {
+
+    const id = req.query.id
+    if (!id) {
+        res.status(400).send({ message: "Advance not found" });
+        return
+    }
+    try {
+
+        const data = await Advance.destroy({
+            where: { id: id },
+            // returning: true
+        })
+        return res.status(200).json({ message: "Advance deleted successfully" });
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "Couldn't remove Advance");
+    }
+
+
+})

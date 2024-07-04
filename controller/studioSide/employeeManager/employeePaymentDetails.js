@@ -105,3 +105,27 @@ exports.getEmployeeSearchViewPaymentDetails = asyncHandler(async (req, res) => {
         throw new Error(error.message || "can't get Employees");
     }
 })
+
+
+exports.deleteEmplloyeePaymentDetails = asyncHandler(async (req, res) => {
+
+    const id = req.query.id
+    if (!id) {
+        res.status(400).send({ message: "Employee payment not found" });
+        return
+    }
+    try {
+
+        const data = await EmployeePaymentDetails.destroy({
+            where: { id: id },
+            // returning: true
+        })
+        return res.status(200).json({ message: "Employee payment deleted successfully" });
+
+    } catch (error) {
+        res.status(400);
+        throw new Error(error.message || "Couldn't remove employee");
+    }
+
+
+})

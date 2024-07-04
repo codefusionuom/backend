@@ -201,14 +201,16 @@ advances.belongsTo(employees, {foreignKey: 'empid'});
 departments.hasMany(employees, {foreignKey: 'empDepartment'});
 employees.belongsTo(departments, {foreignKey: 'empDepartment'});
 
-paymentAllowanceDeduction.hasMany(empallowance, {foreignKey: 'allowanceid'})
+paymentAllowanceDeduction.hasMany(empallowance, {foreignKey: 'allowanceid'});
 empallowance.belongsTo(paymentAllowanceDeduction, {foreignKey: 'allowanceid'});
 
 employees.hasMany(empallowance, {foreignKey: 'empId'});
 empallowance.belongsTo(employees, {foreignKey: 'empId'});
 
 employees.hasMany(payslips, {foreignKey: 'id'});
-payslips.belongsTo(employees, {foreignKey: 'id'})
+payslips.belongsTo(employees, {foreignKey: 'id'});
+
+
 
 
 ///1:1

@@ -1,9 +1,9 @@
 const express =require('express');
 const { createEmployee, getEmployees, getEmployeeByid, updateEmployee, deleteEmplloyee, deleteEmployee, getEmployeesandSearch, getEmployeeSearch } = require('../../../controller/studioSide/employeeManager/employee');
-const { createEmployeePaymentDetails, getEmployeePaymentDetailsByid, updateEmployeePaymentDatails, getEmployeeSearchViewPaymentDetails } = require('../../../controller/studioSide/employeeManager/employeePaymentDetails');
+const { createEmployeePaymentDetails, getEmployeePaymentDetailsByid, updateEmployeePaymentDatails, getEmployeeSearchViewPaymentDetails, deleteEmplloyeePaymentDetails } = require('../../../controller/studioSide/employeeManager/employeePaymentDetails');
 const { createAttendance, getAttendance, getCheckInTotal, getCheckOutTotal, getAttendanceandSearch } = require('../../../controller/studioSide/employeeManager/attendance');
-const { createAllowanceDeduction, getAllowance, deleteAllowance, getAllowanceByType, createEmpAllowance, getEmpAllowanceandSearch, getempAllowance, getEmpAllowanceByid, updateEmpAllowance} = require('../../../controller/studioSide/employeeManager/allowanceDeduction');
-const { createAdvance, getAdvance, getAdvanceByid, updateAdvance, acceptAdvance, rejectAdvance, getRejectAdvance, getEmployeesandSearchForAdvance } = require('../../../controller/studioSide/employeeManager/advance');
+const { createAllowanceDeduction, getAllowance, deleteAllowance, getAllowanceByType, createEmpAllowance, getEmpAllowanceandSearch, getempAllowance, getEmpAllowanceByid, updateEmpAllowance, deleteEmpAllowance} = require('../../../controller/studioSide/employeeManager/allowanceDeduction');
+const { createAdvance, getAdvance, getAdvanceByid, updateAdvance, acceptAdvance, rejectAdvance, getRejectAdvance, getEmployeesandSearchForAdvance, getAdvanceForEmployee, deleteAdvance } = require('../../../controller/studioSide/employeeManager/advance');
 // const { createAdvance, getAdvance, getAdvanceByid, updateAdvance, } = require("../../../controller/studioSide/employeeManager/payment")
 const {getEmployeesForSalary, getEmpAllowanceForSalary, getEmpDeductionForSalary, getAdvanceForSalary, getOTForSalary, getSumAdvanceForSalary, getSumEmpAllowanceForSalary, getSumEmpDeductionForSalary, getEmployeeAllByid, generatePaySlip} = require('../../../controller/studioSide/employeeManager/salary');
 const router = express.Router();
@@ -26,6 +26,7 @@ router.post("/registerEmployeePaymentDetails", createEmployeePaymentDetails);
 router.get("/getEmployeePaymentDetailsByid/:id", getEmployeePaymentDetailsByid);
 router.put("/updateEmployeePaymentDatails/:id", updateEmployeePaymentDatails);
 router.get("/getEmployeeSearchViewPaymentDetails",getEmployeeSearchViewPaymentDetails);
+router.delete("/deleteEmplloyeePaymentDetails", deleteEmplloyeePaymentDetails);
 
 
 //Advance
@@ -38,7 +39,8 @@ router.put("/acceptAdvance/:id", acceptAdvance);
 router.put("/rejectAdvance/:id", rejectAdvance);
 router.get("/getRejectAdvance", getRejectAdvance);
 router.get("/getEmployeesandSearchForAdvance", getEmployeesandSearchForAdvance);
-
+router.get("/getAdvanceForEmployee",getAdvanceForEmployee);
+router.delete("/deleteAdvance", deleteAdvance);
 
 // Allowance
 router.post("/createAllowanceDeduction", createAllowanceDeduction);
@@ -53,6 +55,7 @@ router.get("/getEmpAllowanceandSearch", getEmpAllowanceandSearch);
 router.get("/getEmpAllowance", getempAllowance);
 router.get("/getEmpAllowanceByid", getEmpAllowanceByid);
 router.put("/updateEmpAllowance", updateEmpAllowance);
+router.delete("/deleteEmpAllowance", deleteEmpAllowance);
 
 
 ///////Salary
