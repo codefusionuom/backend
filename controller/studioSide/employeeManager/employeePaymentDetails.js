@@ -34,7 +34,7 @@ exports.createEmployeePaymentDetails = asyncHandler(async (req, res) => {
 
 exports.getEmployeePaymentDetailsByid = asyncHandler(async (req, res) => {
     const { id } = req.params; // Assuming you're passing id as a route parameter
-    const employeepaymentdetails = await EmployeePaymentDetails.findByPk(id);
+    const employeepaymentdetails = await EmployeePaymentDetails.findByPk(id,);
     if (employeepaymentdetails === null) {
         console.log('Employee Payment Details not found!');
         res.status(404).json({ error: 'Employee Payment Details not found' });

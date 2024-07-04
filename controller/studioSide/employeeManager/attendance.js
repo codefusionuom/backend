@@ -57,6 +57,7 @@ exports.getAttendance = asyncHandler(async (req, res) => {
                   attributes: ['empName'],
                 }
               ],
+              order: [['createdAt', 'DESC']],
             limit: 10,
             limit: limit,
             offset: offset,
