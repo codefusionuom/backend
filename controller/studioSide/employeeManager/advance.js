@@ -11,6 +11,8 @@ exports.createAdvance = asyncHandler(async (req, res) => {
 
     try {
         const { empId } = req.query;
+        console.log("getAdvanceForEmployee -------------------------" , empId);
+
         const {  advanceAmount, description } = req.body;
         let { advancerequest } = req.body
         const emplsalary = await PaymentDetails.findOne({
@@ -43,7 +45,7 @@ exports.createAdvance = asyncHandler(async (req, res) => {
                     advancerequest: advancerequest,
                     reject: reject
             })
-            res.status(200).json(advance);
+           return res.status(200).json(advance);
 
 
         } else {
@@ -270,6 +272,30 @@ exports.rejectAdvance = asyncHandler(async (req, res) => {
         throw new Error(error.message || "can't update Advance Record");
     }
 })
+exports.getAdvanceForEmployee = asyncHandler(async (req, res) => {
+    try {
+        const { id } = req.query;
+        console.log("getAdvanceForEmployee -------------------------" , id);
+      if (!id) {
+        return res.status(400).json({ error: 'Employee ID is required' });
+      }
+      
+      const advance = await Advance.findAll({
+        where: { empId: id },
+      });
+    
+      console.log("advanceeeeee ", advance);
+      if (!advance.length) {
+        return res.status(404).json({ error: 'Advance Record not found' });
+      } else {
+        return res.status(200).json({ rows: advance });
+      }
+    } catch (error) {
+      console.log("errorrrrrrrrrrrrrrrrrrrr", error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
 
 
 
