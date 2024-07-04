@@ -29,6 +29,7 @@ app.use("/eventManager", eventMangerRouter)
 app.use("/employeeManager", employeeManagerRouter)
 app.use('/superAdmin', superAdminRouter);
 app.use('/customer',customerRouter );
+app.use('/', userRouter);
 
 
 // const { notFound, errorHandler } = require('./middleware/errorHandler.js');
